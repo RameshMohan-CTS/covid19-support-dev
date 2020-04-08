@@ -1,14 +1,12 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import * as config from "@/config/config";
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    app_settings: {
-      app_title : "",
-      support_categories: []
-    },
+    app_settings: config.initial_app_settings,
     user: {
       loggedIn: false,
       email : "",

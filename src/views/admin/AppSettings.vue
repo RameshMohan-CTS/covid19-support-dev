@@ -1,5 +1,13 @@
 <template>
-  <div class="container pt-4">
+  <div>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+            <b-breadcrumb :items="breadcrumbs" />
+            </div>
+        </div>
+    </div>
+      <div class="container">
       <div class="row">
           <div class="col-sm-12">
               <h4 class="text-primary mb-4">Application Settings</h4>
@@ -49,26 +57,41 @@
                     </div>
                   </div>
               </div>
-              <div class="card">
-                  <div class="card-header">Support Categories</div>
+               <div class="card">                  
                   <div class="card-body">
                       <div class="row">
-                        <div class="col-sm-12">
-                            <div v-for="(support_category,index) in app_settings.support_categories" :key="index" class="my-2">
-                                <div class="row">
-                                    <div class="col-sm-10">
-                                        <template v-if="app_settings.support_categories[index]==='General'|| app_settings.support_categories[index]==='Others'"> <input type="text" disabled class="form-control form-inline" v-model="app_settings.support_categories[index]" /></template>
-                                        <template v-else> <input type="text" class="form-control form-inline" v-model="app_settings.support_categories[index]" /></template>
+                        <div class="col-sm-6">
+                            <div class="card-header">Support Categories</div>
+                                <div v-for="(support_category,index) in app_settings.support_categories" :key="index" class="my-2">
+                                    <div class="row">
+                                        <div class="col-sm-8">
+                                            <template v-if="app_settings.support_categories[index]==='General'|| app_settings.support_categories[index]==='Others'"> <input type="text" disabled class="form-control form-inline" v-model="app_settings.support_categories[index]" /></template>
+                                            <template v-else> <input type="text" class="form-control form-inline" v-model="app_settings.support_categories[index]" /></template>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <i  v-if="app_settings.support_categories[index] !== 'Others'" class="fa fa-plus btn-primary btn mr-2" @click="insertSupportCategory(index)"></i>
+                                            <template v-if="app_settings.support_categories[index]==='General'|| app_settings.support_categories[index]==='Others'">
+                                            </template>
+                                            <template v-else><i class="fa fa-trash btn-danger btn mr-2" @click="removeSupportCategory(index)"></i></template>
+                                        </div>
                                     </div>
-                                    <div class="col-sm-2">
-                                        <i  v-if="app_settings.support_categories[index] !== 'Others'" class="fa fa-plus btn-primary btn mr-2" @click="insertCategory(index)"></i>
-                                        <template v-if="app_settings.support_categories[index]==='General'|| app_settings.support_categories[index]==='Others'">
-                                        </template>
-                                        <template v-else><i class="fa fa-trash btn-danger btn mr-2" @click="removeSupportCategory(index)"></i></template>
+                                </div>
+                            <button class="btn btn-success" @click="addSupportCategory">Add category</button>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="card-header">Donation Categories</div>
+                            <div v-for="(donation_category,index) in app_settings.donation_categories" :key="index" class="my-2">
+                                <div class="row">
+                                    <div class="col-sm-8">                                        
+                                        <template> <input type="text" class="form-control form-inline" v-model="app_settings.donation_categories[index]" /></template>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <i class="fa fa-plus btn-primary btn mr-2" @click="insertDonationCategory(index)"></i>                                        
+                                        <template><i class="fa fa-trash btn-danger btn mr-2" @click="removeDonationCategory(index)"></i></template>
                                     </div>
                                 </div>
                             </div>
-                            <button class="btn btn-success" @click="addCategory">Add category</button>
+                            <button class="btn btn-success" @click="addDonationCategory">Add category</button>
                         </div>
                     </div>
                   </div>
@@ -80,6 +103,7 @@
               </div>
           </div>
       </div>
+  </div>
   </div>
 </template>
 
@@ -96,6 +120,11 @@ export default {
     },
     data(){
         return {
+            breadcrumbs : [
+                { text : "Home", to : "/" },
+                { text : "Admin", to : "/admin" },
+                { text : "Application Settings", active : true }
+            ],
             error: "",
             status: ""
         }
@@ -107,15 +136,25 @@ export default {
         })
     },
     methods: {
-        insertCategory(index){
+        insertSupportCategory(index){
             this.app_settings.support_categories.insert(index+1,"")
         },
         removeSupportCategory(index){
             this.app_settings.support_categories.splice(index,1);
         },
-        addCategory(){
+        addSupportCategory(){
             this.app_settings.support_categories = this.app_settings.support_categories || [];
             this.app_settings.support_categories.push("");
+        },
+        insertDonationCategory(index){
+            this.app_settings.donation_categories.insert(index+1,"")
+        },
+        removeDonationCategory(index){
+            this.app_settings.donation_categories.splice(index,1);
+        },
+        addDonationCategory(){
+            this.app_settings.donation_categories = this.app_settings.donation_categories || [];
+            this.app_settings.donation_categories.push("");
         },
         async saveSettings(){
             if(this.user && this.user.data && this.user.data.admin){
@@ -132,6 +171,8 @@ export default {
                 this.status = "";
                 this.$router.replace({ name: "login" });
             }
+
+            window.scroll(0,0);
         }
     }
 

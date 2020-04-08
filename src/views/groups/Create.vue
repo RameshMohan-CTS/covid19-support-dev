@@ -1,5 +1,5 @@
 <template>
-  <div class="container py-4">
+  <div class="container py-4" v-if="user && user.loggedIn && user.data && (user.data.admin || user.data.moderator)">
     <div class="row" v-if="error">
       <div class="col-sm-12">
         <div class="alert alert-danger">{{error}}</div>
@@ -27,7 +27,7 @@
                   autofocus
                   v-model="form.groupname"
                   placeholder="Group Name"
-                />
+                        /> 
               </div>
               <div class="col-sm-12 my-3">
                 <textarea
@@ -52,10 +52,24 @@
       </div>
     </div>
   </div>
+   <div class="container" v-else>
+          <div class="row">
+              <div class="col-sm-12">
+                  <div class="card mt-4">
+                    <div class="card-body">
+                    	 <div class="card-body">
+                        	 <div class="card-header">Access denied. Please contact your moderator or admin to again access</div>
+                        </div>
+                    </div>
+                </div>
+              </div>
+          </div>
+      </div>
 </template>
 <script>
 import firebase from "firebase";
 import { mapGetters } from "vuex";
+import { required, email, numeric } from "vuelidate/lib/validators";
 export default {
   data() {
     return {
@@ -85,8 +99,17 @@ export default {
         }
       });
     },
+    validaterequest() {
+      this.$v.$touch()
+      if (this.$v.$invalid) {
+            this.submitting = "false";
+            return;
+        }
+        
+    },
     createGroup() {
       this.submitting = true;
+      
       if (this.user && this.user.loggedIn && this.user.data) {
         if (!this.form.groupname || !this.form.groupdescription) {
           this.error = `Enter all the required fields`;

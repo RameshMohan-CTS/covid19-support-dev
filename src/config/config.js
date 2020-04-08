@@ -1,8 +1,23 @@
+const { 
+    VUE_APP_FIREBASE_apiKey,
+    VUE_APP_FIREBASE_authDomain,
+    VUE_APP_FIREBASE_databaseURL,
+    VUE_APP_FIREBASE_projectId
+} = process.env;
+
+export const superadmins = [ `superadmin@${VUE_APP_FIREBASE_authDomain}` ];
+
+export const initial_app_settings = {
+    app_title : "Welcome",
+    support_categories: [ "General", "Others"],
+    donation_categories: []
+};
+
 export const firebase_config = {
-    apiKey: "AIzaSyCVSv4vUrvdVXI6ZG-M-ec-OKMcGJbXLuU",
-    authDomain: "covid19-support-dev.firebaseapp.com",
-    databaseURL: "https://covid19-support-dev.firebaseio.com",
-    projectId: "covid19-support-dev",
+    apiKey: VUE_APP_FIREBASE_apiKey,
+    authDomain: VUE_APP_FIREBASE_authDomain,
+    databaseURL: VUE_APP_FIREBASE_databaseURL,
+    projectId: VUE_APP_FIREBASE_projectId,
     storageBucket: "",
     messagingSenderId: "",
     appId: ""

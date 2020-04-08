@@ -2,17 +2,20 @@
   <div>
     <div class="container">
       <div class="row">
-        <div class="col-sm-12 py-4">
-          <div class="card">
-            <div class="card-header">
-              Contact US
-            </div>
-            <div class="card-body">
-              <MarkdownDisplay v-if="app_settings && app_settings.page_contactus" :text="app_settings.page_contactus" />
-              <div v-else>
-                <h4>Contact us page</h4>
-              </div>
-            </div>
+        <div class="col-sm-12">
+          <b-breadcrumb :items="breadcrumbs" />
+        </div>
+      </div>
+    </div>
+    <div class="container px-4">
+      <div class="row">
+        <div class="col-sm-12">
+          <MarkdownDisplay
+            v-if="app_settings && app_settings.page_contactus"
+            :text="app_settings.page_contactus"
+          />
+          <div v-else>
+            <h4>Contact us page</h4>
           </div>
         </div>
       </div>
@@ -23,26 +26,30 @@
 <script>
 import firebase from "firebase";
 import { mapGetters } from "vuex";
-import MarkdownDisplay from '@/components/MarkdownDisplay';
+import MarkdownDisplay from "@/components/MarkdownDisplay";
 export default {
   components: {
-    MarkdownDisplay
+    MarkdownDisplay,
   },
   data() {
     return {
+      breadcrumbs: [
+        { text: "Home", to: "/" },
+        { text: "Contact Us", active: true },
+      ],
       form: {
         name: "",
-        message: ""
+        message: "",
       },
       error: null,
-      status: "new"
+      status: "new",
     };
   },
   computed: {
     ...mapGetters({
       user: "user",
-      app_settings: "app_settings"
-    })
+      app_settings: "app_settings",
+    }),
   },
   methods: {
     validate() {
@@ -51,11 +58,12 @@ export default {
         this.form.email = this.user.data.email;
       }
       if (!this.form.name) {
-        (this.error = "Enter Your name and contact details"), (this.status = "error");
+        (this.error = "Enter Your name and contact details"),
+          (this.status = "error");
       }
       if (!this.form.message) {
         (this.error = "Enter Your message"), (this.status = "error");
-      }      
+      }
     },
     submitMessage() {
       this.validate();
@@ -67,7 +75,7 @@ export default {
         var db = firebase.firestore();
         db.collection("messages")
           .add(this.form)
-          .then(docRef => {
+          .then((docRef) => {
             this.status = "submitted";
             this.error = null;
             setTimeout(() => {
@@ -76,12 +84,12 @@ export default {
               this.error = null;
             }, 5 * 1000);
           })
-          .catch(error => {
+          .catch((error) => {
             this.error = error;
             this.status = "error";
           });
       }
-    }
-  }
+    },
+  },
 };
 </script>
