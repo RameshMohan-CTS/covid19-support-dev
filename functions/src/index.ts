@@ -5,7 +5,7 @@ const nodemailer =require('nodemailer');
 
 admin.initializeApp();
 
-const superadmins = [ `superadmin@${functions.config().firebase.authdomain}` ];
+const superadmins = [ `superadmin@${functions.config().appsettings.authdomain}` ];
 
 const doesAuthTokenExist = (context:any) => context && context.auth && context.auth.token;
 const isSuperAdmin = (email:string) => superadmins.indexOf(email.toLowerCase()) > -1;
