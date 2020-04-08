@@ -69,6 +69,11 @@ const routes = [
         component: () => import(/* webpackChunkName: "suppport" */ '../views/help/OfferSupport.vue')
       },
       {
+        path: `volunteer-registration-confirmation`,
+        name: `volunteer-registration-confirmation`,
+        component: () => import(/* webpackChunkName: "suppport" */ '../views/public/VolunteerRegisterConfirmation.vue')
+      },
+      {
         path: 'support-requests',
         name: 'support-requests',
         redirect: '/support-requests/bystatus/open'

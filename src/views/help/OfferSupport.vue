@@ -1,6 +1,13 @@
 <template>
     <div>
-        <div class="container mt-4">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-12">
+            <b-breadcrumb :items="breadcrumbs" />
+          </div>
+        </div>
+      </div>
+        <div class="container px-4">
             <div class="animated fadeIn">
                 <div class="row">
                     <div class="col-sm-12">
@@ -307,29 +314,15 @@
                                     <fieldset role="group" class="b-form-group form-group">
                                         <div role="group" class>
                                             <label for="accountstatus">Available for volunteering now?</label>
+                                            <input class="mx-4" type="checkbox" v-model="form.accountstatus" id="accountstatus" value="true" unchecked-value="false" checked>
                                         </div>
                                     </fieldset>
                                 </div>
-                                <div class="col-sm-6">
-                                    <fieldset role="group" class="b-form-group form-group">
-                                        <div role="group" class>
-                                            <input type="checkbox" v-model="form.accountstatus" id="accountstatus" value="true" unchecked-value="false" checked>
-                                        </div>
-                                    </fieldset>
-                                </div>
-                            </div>
-                            <div class="row">
                                 <div class="col-sm-6">
                                     <fieldset role="group" class="b-form-group form-group">
                                         <div role="group" class>
                                             <label for="accountstatus">Are you above 18years ?</label>
-                                        </div>
-                                    </fieldset>
-                                </div>
-                                <div class="col-sm-6">
-                                    <fieldset role="group" class="b-form-group form-group">
-                                        <div role="group" class>
-                                            <input type="checkbox" v-model="form.isadult" id="isadult" value="true" unchecked-value="false">
+                                            <input class="mx-4" type="checkbox" v-model="form.isadult" id="isadult" value="true" unchecked-value="false">
                                         </div>
                                     </fieldset>
                                 </div>
@@ -357,24 +350,13 @@
                                                 </div>
                                             </fieldset>
                                         </div>
-                                        <div class="col-sm-6">
-                                            <fieldset role="group" class="b-form-group form-group">
-                                                <div role="group" class>
-                                                </div>
-                                            </fieldset>
-                                        </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-sm-3">
+                                        <div class="col-sm-3"  v-for="(cat,index) in app_settings.support_categories" :key="index">
                                             <fieldset role="group" class="b-form-group form-group">
                                                 <div role="group" class>
-                                                </div>
-                                            </fieldset>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <fieldset role="group" class="b-form-group form-group">
-                                                <div role="group" class>
-                                                    <ul v-for="(cat,index) in app_settings.support_categories" :key="index"><input type="checkbox" v-bind:value="cat" v-model="form.availability.support" :id="cat"> {{cat}}</ul>
+                                                    <span class="mr-3">{{cat}}</span>
+                                                    <input type="checkbox" v-bind:value="cat" v-model="form.availability.support" :id="cat"> 
                                                 </div>
                                             </fieldset>
                                         </div>
@@ -446,6 +428,10 @@ import { required, email } from "vuelidate/lib/validators";
 export default {
     data() {
         return {
+            breadcrumbs: [
+              { text: "Home", to: "/" },
+              { text: "Volunteer details", active: true },
+            ],
             form: {
                 accountstatus: "",
                 isadult: "",
@@ -530,7 +516,6 @@ export default {
             this.form.upvotes = [];
             this.form.downvotes = [];
             this.form.timestamp = new Date();
-            //alert("Submit"+this.useralreadyexist)
             if (!this.useralreadyexist) {
                 var db = firebase.firestore();
                 db.collection("can_support")
@@ -587,7 +572,7 @@ export default {
             if (this.user.loggedIn && this.user.data) {
                 setTimeout(() => this.$router.push({ path: '/profile' }), 1000);
             } else if (!this.useralreadyexist) {
-                setTimeout(() => this.$router.push({ path: '/profile' }), 1000);
+                setTimeout(() => this.$router.push({ path: '/volunteer-registration-confirmation' }), 1000);
             }
         },
         register() {
@@ -661,23 +646,6 @@ export default {
             this.form.isadult = vol.isadult;
             this.form.availability.support = vol.availability.support;
         },
-        login() {
-            const auth = firebase
-                .auth()
-                .signInWithEmailAndPassword(this.form.pesonal.email.toLowerCase(), this.password);
-            auth
-                .then(data => {
-                    if (data && data.user) {
-                        this.$store.dispatch("fetchUser", data.user);
-                        this.$router.push({ path: '/profile' });
-                    } else {
-                        this.error = "Unknown error";
-                    }
-                })
-                .catch(err => {
-                    this.error = err.message;
-                });
-        },
         updatevolprofile() {
             const updateUserProfile = firebase.functions().httpsCallable("updateUserProfileAll");
             updateUserProfile({
@@ -687,25 +655,24 @@ export default {
                 firstname: this.form.personal.firstname,
                 lastname: this.form.personal.lastname,
                 isadult: this.form.isadult
-            })
-                .then(msg => {
-                    if (this.form) {
-                        this.status = "submitted";
+            }).then(msg => {
+                if (this.form) {
+                    this.status = "submitted";
+                    this.error = null;
+                    setTimeout(() => {
+                        this.status = "new";
                         this.error = null;
-                        setTimeout(() => {
-                            this.status = "new";
-                            this.error = null;
-                        }, 5 * 1000);
-                    } else {
-                        this.status = "error";
-                        this.error = "error";
-                        setTimeout(() => {
-                            this.status = "new";
-                            this.error = null;
-                        }, 5 * 1000);
-                    }
-                })
-                .catch(() => {});
+                    }, 5 * 1000);
+                } else {
+                    this.status = "error";
+                    this.error = "error";
+                    setTimeout(() => {
+                        this.status = "new";
+                        this.error = null;
+                    }, 5 * 1000);
+                }
+            })
+            .catch(() => {});
         }
     }
 };
