@@ -48,13 +48,11 @@
                                         </fieldset>
                                     </div>
                                 </div>
-
                                 <div class="row">
-
                                     <div class="col-sm-6">
                                         <fieldset role="group" class="b-form-group form-group">
                                             <div role="group" class>
-                                                <label for="idtype">Primary ID Type</label>
+                                                <label for="idtype">Primary ID Type*</label>
                                                 <input
                                                     id="idtype"
                                                     type="text"
@@ -143,8 +141,6 @@
                                         </fieldset>
                                     </div>
                                 </div>
-
-
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <fieldset role="group" class="b-form-group form-group">
@@ -159,14 +155,12 @@
                                             </div>
                                         </fieldset>
                                     </div>
-
                                     <div class="col-sm-6" Password v-if="user.loggedIn">
                                         <fieldset role="group" class="b-form-group form-group">
                                             <div role="group" class>
                                             </div>
                                         </fieldset>
                                     </div>
-
                                     <div class="col-sm-5" Password v-else>
                                         <fieldset role="group" class="b-form-group form-group">
                                             <div role="group" class>
@@ -180,10 +174,8 @@
                                             </div>
                                         </fieldset>
                                     </div>
-
                                     <div class="col-sm-1" v-if="user.loggedIn">
                                     </div>
-
                                     <div class="col-sm-1" v-else>
                                         <fieldset role="group" class="b-form-group form-group">
                                             <div role="group" class>
@@ -192,14 +184,11 @@
                                                     <i class="fa fa-eye"></i>
                                                 </span>
                                             </div>
-
                                         </fieldset>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-
                     </div>
                 </div>
             </div>
@@ -212,7 +201,6 @@
                             </div>
                         </div>
                         <div class="card-body">
-
                             <div class="row">
                                 <div class="col-sm-6">
                                     <fieldset role="group" class="b-form-group form-group">
@@ -232,7 +220,6 @@
                                     </fieldset>
                                 </div>
                             </div>
-
                             <div class="row">
                                 <div class="col-sm-6">
                                     <fieldset role="group" class="b-form-group form-group">
@@ -265,7 +252,6 @@
                                     </fieldset>
                                 </div>
                             </div>
-
                             <div class="row">
                                 <div class="col-sm-6">
                                     <fieldset role="group" class="b-form-group form-group">
@@ -316,12 +302,11 @@
                             </div>
                         </div>
                         <div class="card-body">
-
                             <div class="row">
                                 <div class="col-sm-6">
                                     <fieldset role="group" class="b-form-group form-group">
                                         <div role="group" class>
-                                            <label for="accountstatus">Willing to register as volunteer ?</label>
+                                            <label for="accountstatus">Available for volunteering now?</label>
                                         </div>
                                     </fieldset>
                                 </div>
@@ -333,7 +318,6 @@
                                     </fieldset>
                                 </div>
                             </div>
-
                             <div class="row">
                                 <div class="col-sm-6">
                                     <fieldset role="group" class="b-form-group form-group">
@@ -350,8 +334,6 @@
                                     </fieldset>
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
                 </div>
@@ -367,7 +349,6 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-sm-12">
-
                                     <div class="row">
                                         <div class="col-sm-9">
                                             <fieldset role="group" class="b-form-group form-group">
@@ -383,8 +364,6 @@
                                             </fieldset>
                                         </div>
                                     </div>
-
-
                                     <div class="row">
                                         <div class="col-sm-3">
                                             <fieldset role="group" class="b-form-group form-group">
@@ -400,8 +379,6 @@
                                             </fieldset>
                                         </div>
                                     </div>
-
-
                                 </div>
                             </div>
                         </div>
@@ -470,37 +447,35 @@ export default {
     data() {
         return {
             form: {
-                "accountstatus": "",
-                "isadult": "",
-                "availability": {
-                    "support": []
+                accountstatus: "",
+                isadult: "",
+                availability: {
+                    support: []
                 },
-                "personal": {
-                    "firstname": "",
-                    "lastname": "",
-                    "idproof": "",
-                    "sidtype": "",
-                    "sidproof": "",
-                    "mobile": "",
-                    "altmobile": "",
-                    "email": ""
+                personal: {
+                    firstname: "",
+                    lastname: "",
+                    idproof: "",
+                    sidtype: "",
+                    sidproof: "",
+                    mobile: "",
+                    altmobile: "",
+                    email: ""
                 },
-                "address": {
-                    "housenumber": "",
-                    "buildname": "",
-                    "address1": "",
-                    "address2": "",
-                    "area": "",
-                    "postcode": ""
+                address: {
+                    housenumber: "",
+                    buildname: "",
+                    address1: "",
+                    address2: "",
+                    area: "",
+                    postcode: ""
                 }
-
             },
             password: "",
             submitted: false,
             isbutton: false,
             error: null,
             vol: null,
-            categories: null,
             useralreadyexist: false,
             userrolefound: false,
             status: "new"
@@ -532,7 +507,6 @@ export default {
     },
     created() {
         this.fetchVolunteer();
-        this.fetchCategories();
     },
     methods: {
         submitRequest() {
@@ -563,7 +537,6 @@ export default {
                     .doc(this.form.user_email.toLowerCase())
                     .set(this.form)
                     .then(docRef => {
-                        //alert("can support 1");
                         this.status = "submitted";
                         this.error = null;
                         this.submitted = "false";
@@ -587,7 +560,6 @@ export default {
             if (this.user != null) {
                 if (this.user.loggedIn && this.user.data) {
                     this.email = this.user.data.email.toLowerCase();
-                    //alert("Fetch user" + this.user.data.email);
                     var db = firebase.firestore();
                     let voldata = db.collection('can_support').doc(this.email.toLowerCase())
                     let getDoc = voldata.get()
@@ -598,7 +570,6 @@ export default {
                                 console.log('Document data:', doc.data());
                                 let vol = doc.data();
                                 this.vol = vol;
-                                //alert("Fetch user" + this.user.data.email);
                                 this.populateUserDetails();
                             }
                         })
@@ -611,29 +582,6 @@ export default {
         },
         updateUser() {
             this.$router.push({ path: '/profile' })
-        },
-        fetchCategories() {
-            var db = firebase.firestore();
-            let catRef = db.collection('categories');
-            let allCats = catRef.orderBy('cid').get()
-                .then(snapshot => {
-                    let categories_response = [];
-                    snapshot.forEach(doc => {
-                        //console.log(doc.id, '=>', doc.data());		
-                        this.categories = doc.data();
-                        categories_response.push({
-                            id: doc.id,
-                            data: doc.data()
-                        });
-                    });
-                    this.categories = categories_response;
-                })
-                .catch(err => {
-                    console.log('Error getting documents', err);
-                    this.isbutton = false;
-                });
-
-            this.categories = allCats;
         },
         redirect() {
             if (this.user.loggedIn && this.user.data) {
@@ -666,7 +614,6 @@ export default {
                                     lastname: this.form.personal.lastname
                                 })
                                 this.$store.dispatch("fetchUser", result.user);
-                                //this.$router.replace({ name: "profile" });
                             }).catch((ex) => {
                                 console.error(ex);
                                 this.useralreadyexist = true;
@@ -702,22 +649,17 @@ export default {
             this.form.personal.mobile = vol.personal.mobile;
             this.form.personal.altmobile = vol.personal.altmobile;
             this.form.personal.email = vol.personal.email.toLowerCase();
-
             this.form.address.housenumber = vol.address.housenumber;
             this.form.address.buildname = vol.address.buildname;
             this.form.address.address1 = vol.address.address1;
             this.form.address.address2 = vol.address.address2;
             this.form.address.area = vol.address.area;
             this.form.address.postcode = vol.address.postcode;
-
             this.form.availability.location = vol.availability.location;
             this.form.availability.time = vol.availability.time;
             this.form.accountstatus = vol.accountstatus;
             this.form.isadult = vol.isadult;
-
-            //alert(vol.availability.support);
             this.form.availability.support = vol.availability.support;
-
         },
         login() {
             const auth = firebase
@@ -727,10 +669,8 @@ export default {
                 .then(data => {
                     if (data && data.user) {
                         this.$store.dispatch("fetchUser", data.user);
-                        //this.$router.replace({ name: "profile" });
                         this.$router.push({ path: '/profile' });
                     } else {
-                        //alert("error");
                         this.error = "Unknown error";
                     }
                 })
@@ -769,7 +709,6 @@ export default {
         }
     }
 };
-
 </script>        
 
 <style>
