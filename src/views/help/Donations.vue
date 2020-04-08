@@ -36,7 +36,7 @@
                     style="font-size:16px;font-weight:light;"
                   >{{donation.data.donation_status || 'new'}}</span>                  
                   <br />
-                  Donor - {{ donation.data.contact.firstname + " " + donation.data.contact.lastname || donation.data.contact.email }} entered by
+                  Donor - {{ donation.data.contact.name || donation.data.contact.email }} entered by
                   <i>{{donation.data.user_displayName || donation.data.user_email || 'Unknown User' }}</i>
                   <br />
                   <p>{{donation.data.donation.message}}</p>
