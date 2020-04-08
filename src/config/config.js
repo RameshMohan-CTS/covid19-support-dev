@@ -5,7 +5,13 @@ const {
     VUE_APP_FIREBASE_projectId
 } = process.env;
 
-export const superadmins = [ 'yesoreyeram@gmail.com' , 'masteruser@covid19-support-dev.web.app', 'superadmin@covid19-support-dev.web.app' ];
+export const superadmins = [ `superadmin@${VUE_APP_FIREBASE_authDomain}` ];
+
+export const initial_app_settings = {
+    app_title : "Welcome",
+    support_categories: [ "General", "Others"],
+    donation_categories: []
+};
 
 export const firebase_config = {
     apiKey: VUE_APP_FIREBASE_apiKey,

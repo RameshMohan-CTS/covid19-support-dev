@@ -30,7 +30,7 @@ jobs:
       run: |
         yarn build;
         firebase use $VUE_APP_FIREBASE_projectId;
-        firebase functions:config:set admin_email.username=$ADMIN_EMAIL_USERNAME admin_email.password=$ADMIN_EMAIL_PASSWORD --token $FIREBASE_TOKEN;
+        firebase functions:config:set admin_email.username=$ADMIN_EMAIL_USERNAME admin_email.password=$ADMIN_EMAIL_PASSWORD firebase.authdomain=$VUE_APP_FIREBASE_authDomain --token $FIREBASE_TOKEN;
         firebase deploy --token $FIREBASE_TOKEN;
     - name: Build  & Deploy (SVGT)
       env:
@@ -42,10 +42,7 @@ jobs:
         VUE_APP_FIREBASE_databaseURL: ${{ secrets.VUE_APP_FIREBASE_databaseURL_SVGT }}
         VUE_APP_FIREBASE_projectId: ${{ secrets.VUE_APP_FIREBASE_projectId_SVGT }}
       run: |
-        firebase projects:list --token $FIREBASE_TOKEN;
         yarn build;
         firebase use $VUE_APP_FIREBASE_projectId --token $FIREBASE_TOKEN;
-        firebase functions:config:set admin_email.username=$ADMIN_EMAIL_USERNAME admin_email.password=$ADMIN_EMAIL_PASSWORD --token $FIREBASE_TOKEN;
-        firebase deploy --only firestore --token $FIREBASE_TOKEN;
-        firebase deploy --only functions --token $FIREBASE_TOKEN;
-        firebase deploy --only hosting --token $FIREBASE_TOKEN;
+        firebase functions:config:set admin_email.username=$ADMIN_EMAIL_USERNAME admin_email.password=$ADMIN_EMAIL_PASSWORD firebase.authdomain=$VUE_APP_FIREBASE_authDomain --token $FIREBASE_TOKEN;
+        firebase deploy --token $FIREBASE_TOKEN;
