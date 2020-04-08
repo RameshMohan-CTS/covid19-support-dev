@@ -140,7 +140,7 @@ export default {
             lastButtonStatus: true,
             breadcrumbs : [
                 { text : "Home", to : "/" },
-                { text : "Volunteers", active : true }
+                { text : "Volunteers List", active : true }
             ]
         };
     },
