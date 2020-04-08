@@ -58,7 +58,7 @@
             </router-link>
           </b-nav-item>
         </b-nav-item>
-        <b-nav-item class="d-md-down-none" v-if="user.loggedIn && user.data && (user.data.admin || user.data.moderator || user.data.verifiedvolunteer )">
+        <b-nav-item class="d-md-down-none" v-if="user.loggedIn && user.data && (user.data.admin || user.data.moderator || user.data.verifiedvolunteer || isSuperAdmin)">
           <b-nav-item class="py-2 px-3">
             <router-link to="/admin">Manage</router-link>
           </b-nav-item>
@@ -79,6 +79,7 @@
 <script>
 import firebase from "firebase";
 import { mapGetters } from "vuex";
+import { superadmins } from "@/config/config";
 import { Header as AppHeader, SidebarToggler, AsideToggler } from "@coreui/vue";
 export default {
   name: "DefaultHeader",
@@ -93,6 +94,9 @@ export default {
     })
   },
   methods: {
+    isSuperAdmin(){
+      return this.user && this.user.data ? superadmins.indexOf(this.user.data.email) > -1 : false;
+    },
     signOut() {
       this.$router.replace({
         name: "signout"

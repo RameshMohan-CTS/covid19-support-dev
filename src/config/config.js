@@ -1,8 +1,17 @@
+const { 
+    VUE_APP_FIREBASE_apiKey,
+    VUE_APP_FIREBASE_authDomain,
+    VUE_APP_FIREBASE_databaseURL,
+    VUE_APP_FIREBASE_projectId
+} = process.env;
+
+export const superadmins = [ 'yesoreyeram@gmail.com' , 'masteruser@covid19-support-dev.web.app', 'superadmin@covid19-support-dev.web.app' ];
+
 export const firebase_config = {
-    apiKey: "AIzaSyCVSv4vUrvdVXI6ZG-M-ec-OKMcGJbXLuU",
-    authDomain: "covid19-support-dev.firebaseapp.com",
-    databaseURL: "https://covid19-support-dev.firebaseio.com",
-    projectId: "covid19-support-dev",
+    apiKey: VUE_APP_FIREBASE_apiKey,
+    authDomain: VUE_APP_FIREBASE_authDomain,
+    databaseURL: VUE_APP_FIREBASE_databaseURL,
+    projectId: VUE_APP_FIREBASE_projectId,
     storageBucket: "",
     messagingSenderId: "",
     appId: ""

@@ -14,7 +14,7 @@
         </div>
         <div class="row">
           <div class="col-sm-12">
-            <div class="card">
+            <div class="card mt-3">
               <div class="card-body">
                 <div class="row">
                   <div class="col-sm-12">
@@ -128,21 +128,40 @@
               </div>
               <div class="card-body">
                 <div class="row">
-                  <div class="col-sm-12">
+                                    <div class="col-sm-6">
                     <fieldset role="group" class="b-form-group form-group">
                       <div role="group" class>
-                        <label for="fullname">Full Name</label>
+                        <label for="firstName">First Name</label>
                         <input
-                          id="fullname"
+                          id="firstName"
                           type="text"
-                          placeholder="Full name of the person required support"
+                          placeholder="First name of the person required support"
                           class="form-control"
-                          v-model="form.contact.name"
-                          :class="{ 'is-invalid': submitted && $v.form.contact.name.$error }"
+                          v-model="form.contact.firstName"
+                          :class="{ 'is-invalid': submitted && $v.form.contact.firstName.$error }"
                         />
-                        <div v-if="submitted && $v.form.contact.name.$error" class="invalid-feedback">
-                              <span v-if="!$v.form.contact.name.required">Name is required</span>
-							                <span v-if="(!$v.form.contact.name.validName) && ($v.form.contact.name.required)">Name is invalid</span>
+                        <div v-if="submitted && $v.form.contact.firstName.$error" class="invalid-feedback">
+                              <span v-if="!$v.form.contact.firstName.required">First Name is required</span>
+							                <span v-if="(!$v.form.contact.firstName.validName) && ($v.form.contact.firstName.required)">First name is invalid</span>
+                        </div>
+                      </div>
+                    </fieldset>
+                  </div>
+				  <div class="col-sm-6">
+                    <fieldset role="group" class="b-form-group form-group">
+                      <div role="group" class>
+                        <label for="lastName">Last Name</label>
+                        <input
+                          id="lastName"
+                          type="text"
+                          placeholder="Last name of the person required support"
+                          class="form-control"
+                          v-model="form.contact.lastName"
+                          :class="{ 'is-invalid': submitted && $v.form.contact.lastName.$error }"
+                        />
+                        <div v-if="submitted && $v.form.contact.lastName.$error" class="invalid-feedback">
+                              <span v-if="!$v.form.contact.lastName.required">Last Name is required</span>
+							                <span v-if="(!$v.form.contact.lastName.validName) && ($v.form.contact.lastName.required)">Last name is invalid</span>
                         </div>
                       </div>
                     </fieldset>
@@ -288,21 +307,40 @@
               </div>
               <div class="card-body">
                 <div class="row">
-                  <div class="col-sm-12">
+                  <div class="col-sm-6">
                     <fieldset role="group" class="b-form-group form-group">
                       <div role="group" class>
-                        <label for="fullname">Full Name</label>
+                        <label for="firstName">First Name</label>
                         <input
-                          id="fullname"
+                          id="firstName"
                           type="text"
-                          placeholder="Full name of the person required support"
+                          placeholder="First name of the person required support"
                           class="form-control"
-                          v-model="form.requestor.name"
-                          :class="{ 'is-invalid': submitted  && submittedOther && $v.form.requestor.name.$error }"
+                          v-model="form.requestor.firstName"
+                          :class="{ 'is-invalid': submitted  && submittedOther && $v.form.requestor.firstName.$error }"
                         />
-                        <div v-if="submitted && submittedOther && $v.form.requestor.name.$error" class="invalid-feedback">
-                              <span v-if="!$v.form.requestor.name.required">Name is required</span>
-							                <span v-if="(!$v.form.requestor.name.validName) && ($v.form.requestor.name.required)">Name is invalid</span>
+                        <div v-if="submitted && submittedOther && $v.form.requestor.firstName.$error" class="invalid-feedback">
+                              <span v-if="!$v.form.requestor.firstName.required">First Name is required</span>
+							                <span v-if="(!$v.form.requestor.firstName.validName) && ($v.form.requestor.firstName.required)">First name is invalid</span>
+                        </div>
+                      </div>
+                    </fieldset>
+                  </div>
+				  <div class="col-sm-6">
+                    <fieldset role="group" class="b-form-group form-group">
+                      <div role="group" class>
+                        <label for="lastName">Last Name</label>
+                        <input
+                          id="lastName"
+                          type="text"
+                          placeholder="Last name of the person required support"
+                          class="form-control"
+                          v-model="form.requestor.lastName"
+                          :class="{ 'is-invalid': submitted  && submittedOther && $v.form.requestor.lastName.$error }"
+                        />
+                        <div v-if="submitted && submittedOther && $v.form.requestor.lastName.$error" class="invalid-feedback">
+                              <span v-if="!$v.form.requestor.lastName.required">Last Name is required</span>
+							                <span v-if="(!$v.form.requestor.lastName.validName) && ($v.form.requestor.lastName.required)">Last name is invalid</span>
                         </div>
                       </div>
                     </fieldset>
@@ -524,6 +562,8 @@ export default {
         requesting_for: "self",
         contact: {
           name: "",
+          firstName: "",
+          lastName: "",
           address: "",
           phone: "",
           email: "",
@@ -536,6 +576,8 @@ export default {
         },
         requestor: {
           name: "",
+          firstName: "",
+          lastName: "",
           address: "",
           phone: "",
           email: "",
@@ -564,7 +606,8 @@ export default {
          form: {
             contact: {
                 email: { required, email },
-                name: { required, validName},
+                firstName: { required, validName},
+                lastName: { required, validName},
                 phone: { required, validPhoneNo },
                 houseNo: { required },
                 streetName: { required },
@@ -572,7 +615,8 @@ export default {
              },
              requestor: {
                 email: { required, email },
-                name: { required, validName},
+                firstName: { required, validName},
+                lastName: { required, validName},
                 phone: { required, validPhoneNo },
                 houseNo: { required },
                 streetName: { required },
@@ -612,13 +656,19 @@ export default {
       if(this.form.requesting_for === 'other') {
           this.submittedOther=true;
           this.validateSelfAlone=this.$v.form.requestor.$invalid;
-          this.form.requestor.address=this.form.requestor.houseNo+", "+this.form.requestor.streetName;
-          this.form.requestor.name=this.form.requestor.name.trim();
+          this.form.requestor.address=this.form.requestor.houseNo+", "+this.form.requestor.streetName+", "+this.form.requestor.postCode;
+          this.form.requestor.firstName=this.form.requestor.firstName.trim();
+          this.form.requestor.lastName=this.form.requestor.lastName.trim();
+          this.form.requestor.name=this.form.requestor.firstName + " "+this.form.requestor.lastName;
+          this.form.requestor.email=this.form.requestor.email.toLowerCase();
       } else {
           this.submittedOther=false;
           this.validateSelfAlone=false;
-          this.form.contact.address=this.form.contact.houseNo+", "+this.form.contact.streetName;
-          this.form.contact.name=this.form.contact.name.trim();
+          this.form.contact.address=this.form.contact.houseNo+", "+this.form.contact.streetName+", "+this.form.contact.postCode;
+          this.form.contact.firstName=this.form.contact.firstName.trim();
+          this.form.contact.lastName=this.form.contact.lastName.trim();
+          this.form.contact.name=this.form.contact.firstName + " "+this.form.contact.lastName;
+          this.form.contact.email=this.form.contact.email.toLowerCase();
       }
       
       // stop here if form is invalid
@@ -639,6 +689,7 @@ export default {
       this.form.upvotes = [];
       this.form.downvotes = [];
       this.form.timestamp = new Date();
+      
      var db = firebase.firestore();
      db.collection("support_requests")
         .add(this.form)

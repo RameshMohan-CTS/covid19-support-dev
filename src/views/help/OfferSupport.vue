@@ -60,18 +60,14 @@
 				   <div class="col-sm-6">
                     <fieldset role="group" class="b-form-group form-group">
                       <div role="group" class>
-                        <label for="idtype">Primary ID Type*</label>
+                        <label for="idtype">Primary ID Type</label>
                         <input
                           id="idtype"
                           type="text"
                           placeholder="Eg: Passport Number, Driving License Number etc.."
                           class="form-control"
 			              v-model="form.personal.idtype"
-                       	 :class="{ 'is-invalid': submitted && $v.form.personal.idtype.$error }"
                           /> 
-                		<div v-if="submitted && $v.form.personal.idtype.$error" class="invalid-feedback">
-                          <span v-if="!$v.form.personal.idtype.required">Primary Type is required</span>
-                        </div>
                       </div>
                     </fieldset>
                   </div>
@@ -193,7 +189,7 @@
                           type="password"
                           placeholder="Password"
                           class="form-control"
-						              v-model="password"
+						  v-model="password"			              
                         /> 
                       </div>                   
                     </fieldset>
@@ -252,22 +248,7 @@
                         </div>
                       </div>
                     </fieldset>
-                  </div>
-				   <div class="col-sm-6">
-                    <fieldset role="group" class="b-form-group form-group">
-                      <div role="group" class>
-                        <label for="buildname">Build  Name</label>
-                        <input
-                          id="buildname"
-                          type="text"
-                          placeholder="Build Name of the person offering support"
-                          class="form-control"
-						              v-model="form.address.buildname"
-                        />
-                      </div>
-                    </fieldset>
-                  </div>
-			
+                  </div>			
                 </div>
 				
 				 <div class="row">
@@ -519,7 +500,6 @@
 <script>
 import firebase from "firebase";
 import { mapGetters } from "vuex";
-import { ValidationProvider } from 'vee-validate';
 import { required, email, numeric } from "vuelidate/lib/validators";
 import Router from 'vue-router'
 
@@ -529,6 +509,10 @@ const validName = function (name) {
 
 const validPhoneNo = function (phone) {
     return (/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im.test(phone));
+}
+
+const vaildPassowrd = function (password) {
+    return !this.user.loggedIn;
 }
 
 
@@ -545,7 +529,6 @@ export default {
         "personal": {
           "firstname": "",
           "lastname": "",
-          "idtype": "",
 		  "idproof": "",
           "sidtype": "",
 		  "sidproof": "",
@@ -581,7 +564,6 @@ export default {
         lastname: { required },
         mobile: { required },
         email: { required, email },
-        idtype: { required },
         idproof: { required }
       },
        address : {
@@ -592,8 +574,6 @@ export default {
 
        }
     }
-    /*,
-     password: { required } */
 	},
   computed: {
     ...mapGetters({
@@ -610,7 +590,7 @@ export default {
     submitRequest() {
       this.submitted = "true";
       this.isbutton=true;
-     this.$v.$touch()
+      this.$v.$touch()
       if (this.$v.$invalid) {
             this.submitted = "false";
             this.isbutton=false;
@@ -618,11 +598,11 @@ export default {
         }
       this.register();
       if (this.user.loggedIn && this.user.data) {
-        this.form.user_displayName =  this.user.data.displayName || this.user.data.email;
-        this.form.user_email = this.user.data.email;
+        this.form.user_displayName =  this.user.data.displayName || this.user.data.email.toLowerCase();
+        this.form.user_email = this.user.data.email.toLowerCase();
       } else {
       	this.form.user_displayName =this.form.personal.firstname;
-      	this.form.user_email=this.form.personal.email;
+      	this.form.user_email=this.form.personal.email.toLowerCase();
       }
       this.form.verified = false;
       this.form.upvotes = [];
@@ -632,7 +612,7 @@ export default {
     if (!this.useralreadyexist) {
       var db = firebase.firestore();
       db.collection("can_support")
-		  .doc(this.form.user_email)
+		  .doc(this.form.user_email.toLowerCase())
         .set(this.form)
         .then(docRef => {
           //alert("can support 1");
@@ -658,10 +638,10 @@ export default {
 	fetchVolunteer() {
 		if( this.user != null) {
 			if (this.user.loggedIn && this.user.data) {		
-				this.email = this.user.data.email;
+				this.email = this.user.data.email.toLowerCase();
 				//alert("Fetch user" + this.user.data.email);
 				var db = firebase.firestore();
-				let voldata = db.collection('can_support').doc(this.email)
+				let voldata = db.collection('can_support').doc(this.email.toLowerCase())
 				let getDoc = voldata.get()
 				  .then(doc => {
 					if (!doc.exists) {
@@ -723,7 +703,7 @@ export default {
           if(!statuscheck) {
               firebase
                 .auth()
-                .createUserWithEmailAndPassword(this.form.personal.email, this.password)
+                .createUserWithEmailAndPassword(this.form.personal.email.toLowerCase(), this.password)
                 .then(result => {
                   this.status = "submitted";
                   this.error = null;
@@ -734,7 +714,7 @@ export default {
                     .then(async msg => {
                       const updateUserProfile = firebase.functions().httpsCallable("updateUserProfileAll");
                       await updateUserProfile({
-                        username: this.form.personal.email,
+                        username: this.form.personal.email.toLowerCase(),
                         fullname : this.form.personal.firstname || "",
                         isavailablevolunteer : this.form.accountstatus, 
                         firstname : this.form.personal.firstname,
@@ -777,7 +757,7 @@ export default {
     	this.form.personal.sidproof=vol.personal.sidproof;
     	this.form.personal.mobile=vol.personal.mobile;
     	this.form.personal.altmobile=vol.personal.altmobile;
-    	this.form.personal.email=vol.personal.email;
+    	this.form.personal.email=vol.personal.email.toLowerCase();
     	
     	this.form.address.housenumber=vol.address.housenumber;
     	this.form.address.buildname=vol.address.buildname;
@@ -798,7 +778,7 @@ export default {
     login() {
       const auth = firebase
         .auth()
-        .signInWithEmailAndPassword(this.form.pesonal.email, this.password);
+        .signInWithEmailAndPassword(this.form.pesonal.email.toLowerCase(), this.password);
       	auth
         .then(data => {
           if (data && data.user) {
@@ -818,7 +798,7 @@ updatevolprofile() {
 
  const updateUserProfile = firebase.functions().httpsCallable("updateUserProfileAll");
     updateUserProfile({
-    username: this.form.personal.email,
+    username: this.form.personal.email.toLowerCase(),
     fullname : this.form.personal.firstname || "",
     isavailablevolunteer : this.form.accountstatus, 
     firstname : this.form.personal.firstname,

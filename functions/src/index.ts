@@ -63,6 +63,7 @@ export const updateUserProfile = functions.https.onCall((data,context)=>{
         newProfile.firstname = data && data.firstname ? data.firstname : "";
         newProfile.lastname = data && data.lastname ? data.lastname : "";
         newProfile.fullname = data && data.fullname ? data.fullname : "";
+        newProfile.username = data && data.username ? data.username : "";
         newProfile.last_login_time = new Date();
         var userRef = admin.firestore().collection('user_profiles').doc(data.username.toLowerCase());
         userRef.set(newProfile,{merge: true}).then((res)=>{
@@ -80,6 +81,7 @@ export const updateUserProfileAll = functions.https.onCall((data,context)=>{
         newProfile.firstname = data && data.firstname ? data.firstname : "";
         newProfile.lastname = data && data.lastname ? data.lastname : "";
         newProfile.fullname = data && data.fullname ? data.fullname : "";
+        newProfile.username = data && data.username ? data.username : "";
         newProfile.isavailablevolunteer = data.isavailablevolunteer;
 		newProfile.isadult = data.isadult;
         newProfile.isregisteredvolunteer = true;        

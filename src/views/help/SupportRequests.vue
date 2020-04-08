@@ -34,8 +34,8 @@
                  <button type="button" class="btn btn-primary float-right" @click="fetchJobs()">&lt;&lt;</button>
                  </span>
               </div>
-              <div class="card-body">
-                <div v-for="supportrequest in supportrequests" :key="supportrequest.id" v-if="supportrequests.length === pageSize || loadedFrom === 'base'">
+              <div class="card-body" v-if="supportrequests.length === pageSize || loadedFrom === 'base'">
+                <div v-for="supportrequest in supportrequests" :key="supportrequest.id">
                   <span class="text-primary" style="font-size:16px;font-weight:bold;">
                     <router-link
                       :to="{ name: 'supportrequest', params: { supportrequestid: supportrequest.id }}"
@@ -54,7 +54,9 @@
                   <p>{{supportrequest.data.request.detail}}</p>
                   <hr />
                 </div>
-                <div v-for="supportrequest in firstsetResults" :key="supportrequest.id" v-if="supportrequests.length != pageSize && loadedFrom === 'prev'">
+                </div>
+              <div class="card-body" v-if="supportrequests.length != pageSize && loadedFrom === 'prev'">
+                <div v-for="supportrequest in firstsetResults" :key="supportrequest.id">
                   <span class="text-primary" style="font-size:16px;font-weight:bold;">
                     <router-link
                       :to="{ name: 'supportrequest', params: { supportrequestid: supportrequest.id }}"
@@ -73,7 +75,9 @@
                   <p>{{supportrequest.data.request.detail}}</p>
                   <hr />
                 </div>
-                <div v-for="supportrequest in lastsetResults" :key="supportrequest.id" v-if="supportrequests.length != pageSize && loadedFrom === 'next'">
+              </div>
+              <div class="card-body" v-if="supportrequests.length != pageSize && loadedFrom === 'next'">
+                <div v-for="supportrequest in lastsetResults" :key="supportrequest.id">
                   <span class="text-primary" style="font-size:16px;font-weight:bold;">
                     <router-link
                       :to="{ name: 'supportrequest', params: { supportrequestid: supportrequest.id }}"

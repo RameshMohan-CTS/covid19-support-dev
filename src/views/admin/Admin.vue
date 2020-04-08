@@ -9,7 +9,7 @@
           <div class="alert alert-success">{{successmsg}}</div>
         </b-modal>
       </div>
-      <div class="col-sm-12" v-if="user && user.loggedIn && user.data && (user.data.admin || user.data.moderator)">
+      <div class="col-sm-12" v-if="user && user.loggedIn && user.data && (user.data.admin || user.data.moderator || isSuperAdmin)">
         <div class="card">
           <div class="card-body">
             <router-link to="/admin/appsettings" v-if="user.data.admin">
@@ -21,7 +21,7 @@
           </div>
         </div>
       </div>
-      <div class="col-sm-12" v-if="user && user.loggedIn && user.data && (user.data.admin)">
+      <div class="col-sm-12" v-if="user && user.loggedIn && user.data && (user.data.admin || isSuperAdmin)">
         <div class="card">
           <div class="card-body">
             <div class="row mb-2">
@@ -171,6 +171,7 @@
 <script>
 import { mapGetters } from "vuex";
 import { updateUserRoles } from "@/app/backend.js";
+import { superadmins } from "@/config/config";
 export default {
   data() {
     return {
@@ -192,6 +193,9 @@ export default {
     })
   },
   methods: {
+    isSuperAdmin(){
+      return this.user && this.user.data ? superadmins.indexOf(this.user.data.email) > -1 : false;
+    },
     showErrorMessage(errormsg){
       this.error = true;
       this.errormsg = errormsg;

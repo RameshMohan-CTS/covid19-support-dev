@@ -18,7 +18,7 @@
 * NodeJS 12 or later version
 * VS Code or any other IDE
 
-#### Setup Instructionss
+#### Setup Instructions
 
 Once installed Node JS, Execute the following commands 
 
