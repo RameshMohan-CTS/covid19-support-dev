@@ -1,6 +1,13 @@
 <template>
   <div>
-    <div class="container-fluid mt-4">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <b-breadcrumb :items="breadcrumbs" />
+        </div>
+      </div>
+    </div>
+    <div class="container mt-4">      
       <div class="row">
         <div class="col-sm-12">
           <div class="jumbotran border p-4 mb-4 bg-warning text-dark text-center">
@@ -87,6 +94,13 @@
 <script>
 import { mapGetters } from "vuex";
 export default {
+  data(){
+    return {      
+      breadcrumbs : [
+        { text : "Home", active: true }
+      ],
+    }
+  },
   computed: {
     ...mapGetters({
       user: "user",
