@@ -1,164 +1,173 @@
 <template>
-  <div class="container mt-4">
-    <div class="row">
-      <div class="col-sm-12">
-        <b-modal title="Error" v-model="error" @ok="error = false" ok-only ok-variant="primary">
-          <div class="alert alert-danger">{{errormsg}}</div>
-        </b-modal>
-        <b-modal title="Success" v-model="success" @ok="success=false" ok-only ok-variant="primary">
-          <div class="alert alert-success">{{successmsg}}</div>
-        </b-modal>
-      </div>
-      <div class="col-sm-12" v-if="user && user.loggedIn && user.data && (user.data.admin || user.data.moderator || isSuperAdmin)">
-        <div class="card">
-          <div class="card-body">
-            <router-link to="/admin/appsettings" v-if="user.data.admin">
-              <button class="btn btn-primary mr-4">Click for Application Settings</button>
-            </router-link>
-            <router-link to="/admin/messages" v-if="user.data.admin || user.data.moderator">
-              <button class="btn btn-primary mr-4">Messages</button>
-            </router-link>
-          </div>
+  <div>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+            <b-breadcrumb :items="breadcrumbs" />
+            </div>
         </div>
-      </div>
-      <div class="col-sm-12" v-if="user && user.loggedIn && user.data && (user.data.admin || isSuperAdmin)">
-        <div class="card">
-          <div class="card-body">
-            <div class="row mb-2">
-              <div class="col-sm-12">
-                <h5 class="text-primary">Add New admin</h5>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-12">
-                <fieldset role="group" class="b-form-group form-group">
-                  <div role="group" class>
-                    <input
-                      id="newadminemail"
-                      type="text"
-                      placeholder="New admin email"
-                      class="form-control"
-                      v-model="newadminemail"
-                    />
-                  </div>
-                </fieldset>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-8">
-                <div>
-                  <p>By submitting, I am agreeing the T&C and sharing all the above information with the support team.</p>
-                </div>
-              </div>
-              <div class="col-sm-4">
-                <div class="text-right mr-4">
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    @click="addAdmin"
-                    v-if="!submitting_admin"
-                  >Add admin</button>
-                  <button
-                    type="button"
-                    class="btn btn-secondary"
-                    v-if="submitting_admin"
-                  >Submitting...</button>
-                </div>
-              </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <b-modal title="Error" v-model="error" @ok="error = false" ok-only ok-variant="primary">
+            <div class="alert alert-danger">{{errormsg}}</div>
+          </b-modal>
+          <b-modal title="Success" v-model="success" @ok="success=false" ok-only ok-variant="primary">
+            <div class="alert alert-success">{{successmsg}}</div>
+          </b-modal>
+        </div>
+        <div class="col-sm-12" v-if="user && user.loggedIn && user.data && (user.data.admin || user.data.moderator || isSuperAdmin)">
+          <div class="card">
+            <div class="card-body">
+              <router-link to="/admin/appsettings" v-if="user.data.admin">
+                <button class="btn btn-primary mr-4">Click for Application Settings</button>
+              </router-link>
+              <router-link to="/admin/messages" v-if="user.data.admin || user.data.moderator">
+                <button class="btn btn-primary mr-4">Messages</button>
+              </router-link>
             </div>
           </div>
         </div>
-      </div>
-      <div class="col-sm-12" v-if="user && user.loggedIn && user.data && (user.data.admin || user.data.moderator)">
-        <div class="card">
-          <div class="card-body">
-            <div class="row mb-2">
-              <div class="col-sm-12">
-                <h5 class="text-primary">Add New Moderator</h5>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-12">
-                <fieldset role="group" class="b-form-group form-group">
-                  <div role="group" class>
-                    <input
-                      id="newmoderatoremail"
-                      type="text"
-                      placeholder="New moderator email"
-                      class="form-control"
-                      v-model="newmoderatoremail"
-                    />
-                  </div>
-                </fieldset>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-8">
-                <div>
-                  <p>By submitting, I am agreeing the T&C and sharing all the above information with the support team.</p>
+        <div class="col-sm-12" v-if="user && user.loggedIn && user.data && (user.data.admin || isSuperAdmin)">
+          <div class="card">
+            <div class="card-body">
+              <div class="row mb-2">
+                <div class="col-sm-12">
+                  <h5 class="text-primary">Add New admin</h5>
                 </div>
               </div>
-              <div class="col-sm-4">
-                <div class="text-right mr-4">
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    @click="addModerator"
-                    v-if="!submitting_moderator"
-                  >Add Moderator</button>
-                  <button
-                    type="button"
-                    class="btn btn-secondary"
-                    v-if="submitting_moderator"
-                  >Submitting</button>
+              <div class="row">
+                <div class="col-sm-12">
+                  <fieldset role="group" class="b-form-group form-group">
+                    <div role="group" class>
+                      <input
+                        id="newadminemail"
+                        type="text"
+                        placeholder="New admin email"
+                        class="form-control"
+                        v-model="newadminemail"
+                      />
+                    </div>
+                  </fieldset>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-8">
+                  <div>
+                    <p>By submitting, I am agreeing the T&C and sharing all the above information with the support team.</p>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="text-right mr-4">
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      @click="addAdmin"
+                      v-if="!submitting_admin"
+                    >Add admin</button>
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      v-if="submitting_admin"
+                    >Submitting...</button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="col-sm-12" v-if="user && user.loggedIn && user.data && (user.data.admin || user.data.moderator || user.data.verifiedvolunteer)">
-        <div class="card">
-          <div class="card-body">
-            <div class="row mb-2">
-              <div class="col-sm-12">
-                <h5 class="text-primary">Verify volunteer</h5>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-12">
-                <fieldset role="group" class="b-form-group form-group">
-                  <div role="group" class>
-                    <input
-                      id="newvolunteeremail"
-                      type="text"
-                      placeholder="Volunteer email"
-                      class="form-control"
-                      v-model="newvolunteeremail"
-                    />
-                  </div>
-                </fieldset>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-8">
-                <div>
-                  <p>By submitting, I am agreeing the T&C and sharing all the above information with the support team.</p>
+        <div class="col-sm-12" v-if="user && user.loggedIn && user.data && (user.data.admin || user.data.moderator)">
+          <div class="card">
+            <div class="card-body">
+              <div class="row mb-2">
+                <div class="col-sm-12">
+                  <h5 class="text-primary">Add New Moderator</h5>
                 </div>
               </div>
-              <div class="col-sm-4">
-                <div class="text-right mr-4">
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    @click="verifyVolunteer"
-                    v-if="!submitting_verifyvolunteer"
-                  >Verify Volunteer</button>
-                  <button
-                    type="button"
-                    class="btn btn-secondary"
-                    v-if="submitting_verifyvolunteer"
-                  >Submitting..</button>
+              <div class="row">
+                <div class="col-sm-12">
+                  <fieldset role="group" class="b-form-group form-group">
+                    <div role="group" class>
+                      <input
+                        id="newmoderatoremail"
+                        type="text"
+                        placeholder="New moderator email"
+                        class="form-control"
+                        v-model="newmoderatoremail"
+                      />
+                    </div>
+                  </fieldset>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-8">
+                  <div>
+                    <p>By submitting, I am agreeing the T&C and sharing all the above information with the support team.</p>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="text-right mr-4">
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      @click="addModerator"
+                      v-if="!submitting_moderator"
+                    >Add Moderator</button>
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      v-if="submitting_moderator"
+                    >Submitting</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12" v-if="user && user.loggedIn && user.data && (user.data.admin || user.data.moderator || user.data.verifiedvolunteer)">
+          <div class="card">
+            <div class="card-body">
+              <div class="row mb-2">
+                <div class="col-sm-12">
+                  <h5 class="text-primary">Verify volunteer</h5>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  <fieldset role="group" class="b-form-group form-group">
+                    <div role="group" class>
+                      <input
+                        id="newvolunteeremail"
+                        type="text"
+                        placeholder="Volunteer email"
+                        class="form-control"
+                        v-model="newvolunteeremail"
+                      />
+                    </div>
+                  </fieldset>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-8">
+                  <div>
+                    <p>By submitting, I am agreeing the T&C and sharing all the above information with the support team.</p>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="text-right mr-4">
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      @click="verifyVolunteer"
+                      v-if="!submitting_verifyvolunteer"
+                    >Verify Volunteer</button>
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      v-if="submitting_verifyvolunteer"
+                    >Submitting..</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -175,6 +184,10 @@ import { superadmins } from "@/config/config";
 export default {
   data() {
     return {
+      breadcrumbs : [
+          { text : "Home", to : "/" },
+          { text : "Admin", active: true }
+      ],
       submitting_admin: false,
       submitting_moderator: false,
       submitting_verifyvolunteer: false,

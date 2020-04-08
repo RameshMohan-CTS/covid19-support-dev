@@ -1,6 +1,13 @@
 <template>
     <div>
-        <div class="container mt-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                <b-breadcrumb :items="breadcrumbs" />
+                </div>
+            </div>
+        </div>
+        <div class="container">
             <div class="row">
               <b-modal title="Volunteer Details" v-model="showVolunteerDetails" @ok="showVolunteerDetails=false;" ok-only ok-variant="primary">
                 <div class="row">
@@ -110,7 +117,11 @@ export default {
         })
     },
     data() {
-        return {
+        return {   
+            breadcrumbs : [
+                { text : "Home", to : "/" },
+                { text : "Volunteers list", active: true }
+            ],
             volunteers: null,
             pageSize: 5,
             firstVolunteers: null,
