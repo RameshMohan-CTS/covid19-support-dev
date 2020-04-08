@@ -27,6 +27,34 @@
           "order": "ASCENDING"
         },
         {
+          "fieldPath": "timestamp",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "donations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "donation_status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "donations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "donation_status",
+          "order": "ASCENDING"
+        },
+        {
           "fieldPath": "user_email",
           "order": "ASCENDING"
         },
@@ -46,6 +74,34 @@
         },
         {
           "fieldPath": "user_email",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "donations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "picked_up_by",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "donations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "picked_up_by",
           "order": "ASCENDING"
         },
         {
