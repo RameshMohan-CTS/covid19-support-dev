@@ -3,72 +3,79 @@
     <div class="container">
       <div class="row">
         <div class="col-sm-12">
-          <div class="card mt-4">
-            <div class="card-body">
-              <h4 class="mb-4 text-primary">Send a message to Moderator</h4>
-              <div v-if="error" class="alert alert-danger">{{error}}</div>
-              <div
-                v-if="status==='submitted'"
-                class="alert alert-success"
-              >Your message submitted successfully.</div>
-              <div class="row mt-4" v-if="status !== 'submitted'">
-                <div class="col-sm-12" v-if="user.loggedIn === false">
-                  <fieldset role="group" class="b-form-group form-group">
-                    <div role="group" class>
-                      <input
-                        id="name"
-                        type="text"
-                        placeholder="Your Name"
-                        class="form-control"
-                        v-model="form.name"
-                      />
-                    </div>
-                  </fieldset>
+          <b-breadcrumb :items="breadcrumbs" />
+        </div>
+      </div>
+    </div>
+    <div class="container px-4">
+      <div class="row">
+        <div class="col-sm-12">
+          <h4 class="mb-4 text-primary">Send a message to Moderator</h4>
+          <div v-if="error" class="alert alert-danger">{{ error }}</div>
+          <div v-if="status === 'submitted'" class="alert alert-success">
+            Your message submitted successfully.
+          </div>
+          <div class="row mt-4" v-if="status !== 'submitted'">
+            <div class="col-sm-12" v-if="user.loggedIn === false">
+              <fieldset role="group" class="b-form-group form-group">
+                <div role="group" class>
+                  <input
+                    id="name"
+                    type="text"
+                    placeholder="Your Name"
+                    class="form-control"
+                    v-model="form.name"
+                  />
                 </div>
-                <div :class="user.loggedIn? 'col-sm-12':'col-sm-6'" v-if="user.loggedIn === false">
-                  <fieldset role="group" class="b-form-group form-group">
-                    <div role="group" class>
-                      <input
-                        id="email"
-                        type="text"
-                        placeholder="Your email"
-                        class="form-control"
-                        v-model="form.email"
-                      />
-                    </div>
-                  </fieldset>
+              </fieldset>
+            </div>
+            <div
+              :class="user.loggedIn ? 'col-sm-12' : 'col-sm-6'"
+              v-if="user.loggedIn === false"
+            >
+              <fieldset role="group" class="b-form-group form-group">
+                <div role="group" class>
+                  <input
+                    id="email"
+                    type="text"
+                    placeholder="Your email"
+                    class="form-control"
+                    v-model="form.email"
+                  />
                 </div>
-                <div :class="user.loggedIn? 'col-sm-12':'col-sm-6'">
-                  <fieldset role="group" class="b-form-group form-group">
-                    <div role="group" class>
-                      <input
-                        id="phone"
-                        type="text"
-                        placeholder="Your phone number"
-                        class="form-control"
-                        v-model="form.phone"
-                      />
-                    </div>
-                  </fieldset>
+              </fieldset>
+            </div>
+            <div :class="user.loggedIn ? 'col-sm-12' : 'col-sm-6'">
+              <fieldset role="group" class="b-form-group form-group">
+                <div role="group" class>
+                  <input
+                    id="phone"
+                    type="text"
+                    placeholder="Your phone number"
+                    class="form-control"
+                    v-model="form.phone"
+                  />
                 </div>
-                <div class="col-sm-12">
-                  <fieldset role="group" class="b-form-group form-group">
-                    <div role="group" class>
-                      <textarea
-                        id="message"
-                        type="text"
-                        rows="5"
-                        placeholder="Enter your Message"
-                        class="form-control"
-                        v-model="form.message"
-                      />
-                    </div>
-                  </fieldset>
+              </fieldset>
+            </div>
+            <div class="col-sm-12">
+              <fieldset role="group" class="b-form-group form-group">
+                <div role="group" class>
+                  <textarea
+                    id="message"
+                    type="text"
+                    rows="5"
+                    placeholder="Enter your Message"
+                    class="form-control"
+                    v-model="form.message"
+                  />
                 </div>
-                <div class="col-sm-12 text-center pt-2">
-                  <button class="btn btn-primary" @click="submitMessage">Submit your message</button>
-                </div>
-              </div>
+              </fieldset>
+            </div>
+            <div class="col-sm-12 text-center pt-2">
+              <button class="btn btn-primary" @click="submitMessage">
+                Submit your message
+              </button>
             </div>
           </div>
         </div>
@@ -83,22 +90,27 @@ import { mapGetters } from "vuex";
 export default {
   data() {
     return {
+      breadcrumbs: [
+        { text: "Home", to: "/" },
+        { text: "Contact Us", to: "/contact" },
+        { text: "Send message to moderator", active: true },
+      ],
       form: {
         name: "",
-        email:"",
+        email: "",
         phone: "",
         message: "",
         msg_read: false,
-        notes: []
+        notes: [],
       },
       error: null,
-      status: "new"
+      status: "new",
     };
   },
   computed: {
     ...mapGetters({
-      user: "user"
-    })
+      user: "user",
+    }),
   },
   methods: {
     validate() {
@@ -107,10 +119,11 @@ export default {
         this.form.email = this.user.data.email;
       }
       if (!this.form.name) {
-        (this.error = "Enter Your name and contact details"), (this.status = "error");
+        (this.error = "Enter Your name and contact details"),
+          (this.status = "error");
       } else if (!this.form.message) {
         (this.error = "Enter Your message"), (this.status = "error");
-      }  else {
+      } else {
         this.error = null;
       }
     },
@@ -124,7 +137,7 @@ export default {
         var db = firebase.firestore();
         db.collection("messages")
           .add(this.form)
-          .then(docRef => {
+          .then((docRef) => {
             this.status = "submitted";
             this.error = null;
             setTimeout(() => {
@@ -133,12 +146,12 @@ export default {
               this.error = null;
             }, 5 * 1000);
           })
-          .catch(error => {
+          .catch((error) => {
             this.error = error;
             this.status = "error";
           });
       }
-    }
-  }
+    },
+  },
 };
 </script>

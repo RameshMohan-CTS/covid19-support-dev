@@ -25,7 +25,7 @@
                 </div>
                 <div class="row my-4">
                   <div class="col-sm-4">Donor</div>
-                  <div class="col-sm-8">{{donation.contact.name|| 'Not Available'}}</div>
+                  <div class="col-sm-8">{{donation.contact.firstname + " " + donation.contact.lastname|| 'Not Available'}}</div>
                 </div>
                 <div class="row my-4">
                   <div class="col-sm-4">Contact Address</div>
@@ -51,23 +51,35 @@
             <div v-if="error" class="alert alert-danger">{{error}}</div>
             <div v-if="success" class="alert alert-success">{{success}}</div>
              <h5 class="text-primary">Assign to Volunteer</h5>
+             <div class="row">
+               <div role="group" class="col-sm-8">
+               <b-form-group label="Select a Volunteer Group" label-for="basicSelect" :label-cols="4" >
+                  <b-form-select
+                    id="basicSelect"
+                    :plain="true"
+                    :options="groups"
+                    value="Select a group"
+                    v-model="selectedGroup"
+                    @change="fetchVolunteers"
+                  ></b-form-select>
+                </b-form-group>
+                </div>
+             </div>
               <div class="row">
-                <div class="col-sm-8">
-                  <fieldset role="group" class="b-form-group form-group">
-                    <div role="group" class>
-                      <input
-                        id="volunteeremail"
-                        type="text"
-                        placeholder="Volunteer email"
-                        class="form-control"
-                        v-model="volunteerEmail"
-                      />
-                    </div>
-                  </fieldset>                  
+              <div role="group" class="col-sm-8">
+               <b-form-group label="Select a Volunteer" label-for="basicSelect" :label-cols="4" >
+                  <b-form-select
+                    id="basicSelect"
+                    :plain="true"
+                    :options="volunteers"
+                    value="Select a volunteer"
+                    v-model="volunteerEmail"                    
+                  ></b-form-select>
+                </b-form-group>
                 </div>
                 <div class="col-sm-4">
                   <div class="text-right mr-4">
-                    <button type="button" class="btn btn-primary" @click="AssignToVolunteer">Assign to volunteer</button>
+                    <button type="button" class="btn btn-primary" @click="AssignToVolunteer">Assign</button>
                   </div>
                 </div>
               </div>              
@@ -170,7 +182,11 @@ export default {
       error: "",
       success: "",
       donation: null,
-      volunteerEmail: "",      
+      volunteerEmail: "",
+      groups: [],
+      volunteers: [],
+      selectedGroup: null,
+      selectedVolunteer: null           
     };
   },
   computed: {
@@ -204,8 +220,57 @@ export default {
   },
   created() {    
     this.fetchDonation();
+    this.fetchGroups();
   },
   methods: {
+    async fetchGroups(){
+      if(this.user &&
+      this.user.data &&
+      this.user.data.moderator) {
+        var db = firebase.firestore();
+        let groupMaps = [];
+        let _groups = [];
+        await db.collection('application_settings')
+        .doc('groups')
+        .get()
+        .then(docRef => {          
+          groupMaps = docRef.data().groups;
+        })
+        .catch(err=>{
+          console.log('error fetching groups: ', err)
+        })       
+        for(var i=0; i<=groupMaps.length-1; i++){
+            _groups.push(groupMaps[i].groupname)
+        }        
+        this.groups = _groups;
+      }
+    },
+    async fetchVolunteers(){
+      if(this.user &&
+      this.user.data &&
+      this.user.data.moderator) {
+
+        var db = firebase.firestore();
+        
+        let _volunteers = [];
+        await db.collection('groups')
+        .where('groupname', '==', this.selectedGroup)
+        .get()
+        .then(querySnapshot => { 
+          querySnapshot.forEach(doc => {
+              _volunteers = doc.data().members
+          });
+        })
+        .catch(err=>{
+          console.log('error fetching volunteers: ', err)
+        })       
+        // for(var i=0; i<=groupMaps.length-1; i++){
+        //     _groups.push(groupMaps[i].groupname)
+        // }
+        this.volunteers = _volunteers;
+      }
+
+    },
     fetchDonation() {
       if (
         this.user &&
@@ -316,8 +381,7 @@ export default {
             console.log(err);
           });
           this.success = "Successfully Assigned!"
-          this.sendEmailToVolunteer();
-          
+          this.sendEmailToVolunteer();          
       }
     },
     sendEmailToVolunteer(){
@@ -326,13 +390,15 @@ export default {
         volunteerEmail: this.donation.picked_up_by,
         donorPromiseTitle: this.donation.donation.title,
         donorPromiseMsg: this.donation.donation.message,        
-        donorName: this.donation.contact.name,
+        donorName: this.donation.contact.firstname + " " + this.donation.contact.lastname,
         donorAddress: this.donation.contact.address,
         donorPhone: this.donation.contact.phone,
         donorEmail: this.donation.contact.email
       })
       .then(
-        this.success = "Successfully assigned and email sent"
+        setTimeout(() => {
+            this.success = "Successfully assigned and email sent"
+            }, 5 * 1000)                
       )
         // .then(msg => {
         //   if (

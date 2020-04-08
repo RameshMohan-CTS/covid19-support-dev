@@ -5,7 +5,7 @@ const nodemailer =require('nodemailer');
 
 admin.initializeApp();
 
-const superadmins = [ 'yesoreyeram@gmail.com' , 'masteruser@covid19-support-dev.web.app', 'superadmin@covid19-support-dev.web.app' ];
+const superadmins = [ `superadmin@${functions.config().appsettings.authdomain}` ];
 
 const doesAuthTokenExist = (context:any) => context && context.auth && context.auth.token;
 const isSuperAdmin = (email:string) => superadmins.indexOf(email.toLowerCase()) > -1;

@@ -32,12 +32,9 @@
     "perfect-scrollbar": "^1.4.0",
     "register-service-worker": "^1.6.2",
     "simple-line-icons": "^2.4.1",
-    "v-data-table": "^2.1.0",
-    "vee-validate": "^3.2.5",
     "vue": "^2.6.11",
     "vue-chartjs": "^3.4.2",
     "vue-router": "^3.1.5",
-    "vue-table-dynamic": "^0.2.1",
     "vuelidate": "^0.7.5",
     "vuex": "^3.1.2"
   },

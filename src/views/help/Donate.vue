@@ -22,7 +22,7 @@
                         <b-form-select
                           id="basicSelect"
                           :plain="true"
-                          :options="donation_categories"
+                          :options="app_settings.donation_categories"
                           value="Please select"
                           v-model="form.donation.category"
                         ></b-form-select>
@@ -32,7 +32,7 @@
                         class="form-control mb-3"
                         v-model="form.donation.title"
                         required
-                        placeholder="What you would like to donate? ( Example: N95 masks * 100 )"
+                        placeholder="What would you like to donate? ( Example: N95 masks * 100 )"
                       />
                       <fieldset role="group" class="b-form-group form-group">
                         <div role="group" class>
@@ -61,13 +61,13 @@
                     <div class="col-sm-6">
                       <fieldset role="group" class="b-form-group form-group">
                         <div role="group" class>
-                          <label for="fullname">Donor Full Name</label>
+                          <label for="firstname">First Name</label>
                           <input
-                            id="fullname"
-                            v-model="form.contact.name"
+                            id="firstname"
+                            v-model="form.contact.firstname"
                             required
                             type="text"
-                            placeholder="Full name of the person donating"
+                            placeholder="First name"
                             class="form-control"
                           />
                         </div>
@@ -76,32 +76,15 @@
                     <div class="col-sm-6">
                       <fieldset role="group" class="b-form-group form-group">
                         <div role="group" class>
-                          <label for="requestfor">Submitting by</label>
-                          <div id="requestfor" role="radiogroup" tabindex="-1" class>
-                            <div class="custom-control custom-radio custom-control-inline">
-                              <input
-                                type="radio"
-                                id="requestfor1"
-                                name="requestfor"
-                                value="self"
-                                checked="checked"
-                                class="custom-control-input"
-                                v-model="form.requesting_for"
-                              />
-                              <label for="requestfor1" class="custom-control-label">Self</label>
-                            </div>
-                            <div class="custom-control custom-radio custom-control-inline">
-                              <input
-                                type="radio"
-                                id="requestfor2"
-                                name="requestfor"
-                                value="other"
-                                class="custom-control-input"
-                                v-model="form.requesting_for"
-                              />
-                              <label for="requestfor2" class="custom-control-label">On behalf others</label>
-                            </div>
-                          </div>
+                          <label for="lastname">Last Name</label>
+                          <input
+                            id="lastname"
+                            v-model="form.contact.lastname"
+                            required
+                            type="text"
+                            placeholder="Last name"
+                            class="form-control"
+                          />
                         </div>
                       </fieldset>
                     </div>
@@ -151,6 +134,40 @@
                             v-model="form.contact.email"
                             required
                           />
+                        </div>
+                      </fieldset>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <fieldset role="group" class="b-form-group form-group">
+                        <div role="group" class>
+                          <label for="requestfor">Submitted by</label>
+                          <div id="requestfor" role="radiogroup" tabindex="-1" class>
+                            <div class="custom-control custom-radio custom-control-inline">
+                              <input
+                                type="radio"
+                                id="requestfor1"
+                                name="requestfor"
+                                value="self"
+                                checked="checked"
+                                class="custom-control-input"
+                                v-model="form.requesting_for"
+                              />
+                              <label for="requestfor1" class="custom-control-label">Self</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                              <input
+                                type="radio"
+                                id="requestfor2"
+                                name="requestfor"
+                                value="other"
+                                class="custom-control-input"
+                                v-model="form.requesting_for"
+                              />
+                              <label for="requestfor2" class="custom-control-label">On behalf of others</label>
+                            </div>
+                          </div>
                         </div>
                       </fieldset>
                     </div>
@@ -277,7 +294,8 @@ export default {
         },
         requesting_for: "self",
         contact: {
-          name: "",
+          firstname: "",
+          lastname: "",
           address: "",
           phone: "",
           email: ""
@@ -292,38 +310,19 @@ export default {
       },
       error: null,
       status: "new",
-      refId: null,
-      donation_categories: []
+      refId: null,      
     };
   },
   created() {    
-    this.prepopulate();
-    this.fetchCategories();
+    this.prepopulate();    
   },
   computed: {
     ...mapGetters({
-      user: "user"
+      user: "user",
+      app_settings: "app_settings"
     })
   },
-  methods: {
-     fetchCategories(){   
-      var categories = []; 
-      var db = firebase.firestore();  
-      db.collection('categories').get()
-      .then(snapshot => {
-        if (snapshot.empty) {
-          console.log('No categories found');
-          return;
-        }  
-        snapshot.forEach(doc => {          
-          categories.push(doc.id);
-        });
-      })
-      .catch(err => {
-        console.log('Error getting categories', err);
-      });      
-      this.donation_categories = categories;      
-    },
+  methods: {     
     prepopulate(){
       if(this.user && this.user.data){
           this.form.requestor.name = this.user.data.displayName;      
@@ -334,7 +333,8 @@ export default {
       this.form.donation.category = "General";
       this.form.donation.title = "";
       this.form.donation.message = "";
-      this.form.contact.name = "";
+      this.form.contact.firstname = "";
+      this.form.contact.lastname = "";
       this.form.contact.address = "";
       this.form.contact.phone = "";
       this.form.contact.email = "";
@@ -361,14 +361,13 @@ export default {
         window.scrollTo(0,0);
         return;
       } 
-      if (!this.form.contact.name || !this.form.contact.address || 
+      if (!this.form.contact.firstname || !this.form.contact.address || 
           !this.form.contact.phone || !this.form.contact.email) {
         this.error = "Enter all donor details";
         this.status = "error";
         window.scrollTo(0,0);
         return;
       } 
-
       var db = firebase.firestore();      
       db.collection("donations")
         .add(this.form)

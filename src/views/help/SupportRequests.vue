@@ -1,21 +1,26 @@
 <template>
   <div>
-    <div class="container mt-4">
-      <div
-        v-if="user && user.loggedIn && user.data && (user.data.admin || user.data.moderator || user.data.verifiedvolunteer)"
-      >
-        <div class="row mt-4">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <b-breadcrumb :items="breadcrumbs"/>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div v-if="user && user.loggedIn && user.data && (user.data.admin || user.data.moderator || user.data.verifiedvolunteer)">
+        <div class="row">
           <div class="col-sm-12">
-            <div class="card mt-3">
+            <div class="card">
               <div class="card-body">
                 <div class="row">
                   <div class="col-sm-4">Filter By Status</div>
                   <div class="col-sm-8">
-                      <span class="mx-2"><router-link :to="{name:'support-requests-bystatus', params: { status : 'active' }}">Open</router-link></span>
+                      <!-- <span class="mx-2"><router-link :to="{name:'support-requests-bystatus', params: { status : 'active' }}">Open</router-link></span> -->
                       <span class="mx-2"><router-link :to="{name:'support-requests-bystatus', params: { status : 'new' }}">New</router-link></span>
                       <span class="mx-2"><router-link :to="{name:'support-requests-bystatus', params: { status : 'pickedup' }}">Picked Up</router-link></span>
-                      <span class="mx-2"><router-link :to="{name:'support-requests-bystatus', params: { status : 'waiting-for-pickup' }}">Waiting for pickup</router-link></span>
-                      <span class="mx-2"><router-link :to="{name:'support-requests-bystatus', params: { status : 'closed' }}">Closed</router-link></span>
+                      <!-- <span class="mx-2"><router-link :to="{name:'support-requests-bystatus', params: { status : 'waiting-for-pickup' }}">Waiting for pickup</router-link></span> -->
+                      <!-- <span class="mx-2"><router-link :to="{name:'support-requests-bystatus', params: { status : 'closed' }}">Closed</router-link></span> -->
                       <span class="mx-2"><router-link :to="{name:'support-requests-bystatus', params: { status : 'completed' }}">Completed</router-link></span>
                   </div>
                 </div>
@@ -118,6 +123,10 @@ var db = firebase.firestore();
 export default {
   data() {
     return {
+      breadcrumbs : [
+        { text : "Home", to : "/" },
+        { text : "Support Requests List" , active: true}
+      ],
       supportrequests: null,
       pageSize: 5,
       firstSupportRequest: null,
