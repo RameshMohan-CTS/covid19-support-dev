@@ -93,7 +93,7 @@ export default {
       breadcrumbs : [
                 { text : "Home", to : "/" },
                 { text : "Donations", active : true }
-            ],
+            ]
     };
   },
   watch: {
