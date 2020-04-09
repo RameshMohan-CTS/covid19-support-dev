@@ -53,7 +53,7 @@ service cloud.firestore {
 // rules for application_settings collections
     match /application_settings/{application_setting} {
       allow read : if request.auth != null;
-      allow write: if request.auth != null;
+      allow write: if get(/databases/$(database)/documents/user_profiles/$(request.auth.uid)).data.ismoderator == true;
       allow delete: if get(/databases/$(database)/documents/user_profiles/$(request.auth.uid)).data.ismoderator == true;
   	}
 // rules for comments collections
@@ -61,6 +61,12 @@ service cloud.firestore {
       allow read : if request.auth != null;
       allow write: if request.auth != null;
       allow delete: if get(/databases/$(database)/documents/user_profiles/$(request.auth.uid)).data.ismoderator == true;
+    }
+// rules for user_profiles collections
+  	match /user_profiles/{user_profile} {
+      allow read : if request.auth != null;
+      allow write: if request.auth != null;
+      allow update: if request.auth != null;
     }
 // rules for audit collections
   	match /audit/{audit} {
