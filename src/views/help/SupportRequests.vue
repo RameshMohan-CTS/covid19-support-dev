@@ -33,56 +33,18 @@
             <div class="card">
               <div class="card-header"><span class="btn btn-primary"><b>Support Requests</b></span>
                  <span v-if="pageNavButton">
-                 <button type="button" class="btn btn-primary float-right" @click="lastPage(filterStatus)">&gt;&gt;</button>
-                 <button type="button" class="btn btn-primary float-right ml-1" @click="nextPage(filterStatus)">&gt;</button>
-                 <button type="button" class="btn btn-primary float-right" @click="prevPage(filterStatus)">&lt;</button>
-                 <button type="button" class="btn btn-primary float-right" @click="fetchJobs()">&lt;&lt;</button>
+                                <button type="button" class="btn btn-primary float-right" @click="lastPage(filterStatus)" v-if="lastButtonStatus">&gt;&gt;</button>
+                                <button type="button" class="btn btn-primary float-right" v-if="!lastButtonStatus">&gt;&gt;</button>
+                                <button type="button" class="btn btn-primary float-right ml-1" @click="nextPage(filterStatus)" v-if="nextNavStatus">&gt;</button>
+                                <button type="button" class="btn btn-primary float-right ml-1" v-if="!nextNavStatus">&gt;</button>
+                                <button type="button" class="btn btn-primary float-right" @click="prevPage(filterStatus)" v-if="prevNavStatus">&lt;</button>
+                                <button type="button" class="btn btn-primary float-right" v-if="!prevNavStatus">&lt;</button>
+                                <button type="button" class="btn btn-primary float-right" @click="fetchJobs()" v-if="firstButtonStatus">&lt;&lt;</button>
+                                <button type="button" class="btn btn-primary float-right" v-if="!firstButtonStatus">&lt;&lt;</button>
                  </span>
               </div>
-              <div class="card-body" v-if="supportrequests.length === pageSize || loadedFrom === 'base'">
+              <div class="card-body">
                 <div v-for="supportrequest in supportrequests" :key="supportrequest.id">
-                  <span class="text-primary" style="font-size:16px;font-weight:bold;">
-                    <router-link
-                      :to="{ name: 'supportrequest', params: { supportrequestid: supportrequest.id }}"
-                    >{{supportrequest.data.request.title || 'No Title'}}</router-link>
-                  </span> - 
-                  <span
-                    style="font-size:16px;font-weight:light;"
-                  >{{supportrequest.data.request.status || 'new'}}</span> -
-                  <router-link
-                    :to="{ name: 'supportrequest', params: { supportrequestid: supportrequest.id }}"
-                  >More details</router-link>
-                  <br />
-                  For {{ supportrequest.data.contact.name || supportrequest.data.contact.email }} by
-                  <i>{{supportrequest.data.user_displayName || supportrequest.data.user_email || 'Unknown User' }}</i>
-                  <br />
-                  <p>{{supportrequest.data.request.detail}}</p>
-                  <hr />
-                </div>
-                </div>
-              <div class="card-body" v-if="supportrequests.length != pageSize && loadedFrom === 'prev'">
-                <div v-for="supportrequest in firstsetResults" :key="supportrequest.id">
-                  <span class="text-primary" style="font-size:16px;font-weight:bold;">
-                    <router-link
-                      :to="{ name: 'supportrequest', params: { supportrequestid: supportrequest.id }}"
-                    >{{supportrequest.data.request.title || 'No Title'}}</router-link>
-                  </span> - 
-                  <span
-                    style="font-size:16px;font-weight:light;"
-                  >{{supportrequest.data.request.status || 'new'}}</span> -
-                  <router-link
-                    :to="{ name: 'supportrequest', params: { supportrequestid: supportrequest.id }}"
-                  >More details</router-link>
-                  <br />
-                  For {{ supportrequest.data.contact.name || supportrequest.data.contact.email }} by
-                  <i>{{supportrequest.data.user_displayName || supportrequest.data.user_email || 'Unknown User' }}</i>
-                  <br />
-                  <p>{{supportrequest.data.request.detail}}</p>
-                  <hr />
-                </div>
-              </div>
-              <div class="card-body" v-if="supportrequests.length != pageSize && loadedFrom === 'next'">
-                <div v-for="supportrequest in lastsetResults" :key="supportrequest.id">
                   <span class="text-primary" style="font-size:16px;font-weight:bold;">
                     <router-link
                       :to="{ name: 'supportrequest', params: { supportrequestid: supportrequest.id }}"
@@ -119,7 +81,6 @@
 import firebase from "firebase";
 import { mapGetters } from "vuex";
 var db = firebase.firestore();
-
 export default {
   data() {
     return {
@@ -135,9 +96,11 @@ export default {
       prevNavStatus: false,
       nextNavStatus: false,
       loadedFrom:"base",
-      firstsetResults: [],
-      lastsetResults:[],
-      pageNavButton:false
+      pageNavButton:false,
+      firstButtonStatus: false,
+      prevNavStatus: false,
+      nextNavStatus: true,
+      lastButtonStatus: true
     };
   },
   watch: {
@@ -146,20 +109,6 @@ export default {
     }
   },
   methods: {
-    pageNavStatusCheck() {
-        if(this.supportrequests <this.pageSize) {
-           this.pageNavButton=false;
-       } else {
-           this.pageNavButton=true;
-       }
-    },
-    getAllJobs() {
-      return db
-        .collection("support_requests")
-        .orderBy("timestamp", "desc")
-        .limit(50)
-        .get();
-    },
     getActiveJobs() {
       return db
         .collection("support_requests")
@@ -189,10 +138,17 @@ export default {
         .get()
         .then(querySnapshot => {
           this.supportrequests = this.getSupportRequests(querySnapshot);
-          if(this.supportrequests.length==0){
-            this.lastPage(this.filterStatus);lastsetResults
-          } else if(this.supportrequests.length<this.pageSize) {
-            this.lastsetResults=this.supportrequests
+          if (this.supportrequests.length < this.pageSize) {
+                        this.lastPage(this.filterStatus);
+                        this.firstButtonStatus=true;
+                        this.prevNavStatus=true;
+                        this.nextNavStatus=false;
+                        this.lastButtonStatus=false;
+          } else {
+                        this.firstButtonStatus=true;
+                        this.prevNavStatus=true;
+                        this.nextNavStatus=true;
+                        this.lastButtonStatus=false;
           }
         }); 
    },
@@ -209,6 +165,18 @@ export default {
         .get()
         .then(querySnapshot => {
           this.supportrequests = this.getSupportRequests(querySnapshot);
+		  if (this.supportrequests.length < this.pageSize) {
+                        this.fetchJobs();
+                        this.firstButtonStatus=false;
+                        this.prevNavStatus=true;
+                        this.nextNavStatus=true;
+                        this.lastButtonStatus=true;
+                    } else {
+                        this.firstButtonStatus=true;
+                        this.prevNavStatus=true;
+                        this.nextNavStatus=true;
+                        this.lastButtonStatus=true;
+                    }
         }); 
   },
    lastPage(filterStatus) {
@@ -226,7 +194,10 @@ export default {
         .get()
         .then(querySnapshot => {
           this.supportrequests = this.getSupportRequests(querySnapshot);
-          this.lastsetResults=this.supportrequests;
+          this.firstButtonStatus=true;
+          this.prevNavStatus=true;
+          this.nextNavStatus=false;
+          this.lastButtonStatus=false;
         });
   },
   getSupportRequests(querySnapshot){
@@ -236,7 +207,6 @@ export default {
       if(i==0){
         this.firstSupportRequest = doc;
       }
-
       if(i == (this.pageSize -1)) {
         this.lastSupportRequest = doc;
       }
@@ -246,21 +216,25 @@ export default {
               data: doc.data()
         });
     });
-
     return support_requests;
-
   },
   fetchJobs() {
       const filter_status = this.$route.params.status;
       this.supportrequests =[];
       this.firstsetResults=[];
-
       if (!filter_status || filter_status === "active" || filter_status === "open") {
         this.filterStatus=["new", "pickedup", "waiting-for-pickup"];
         this.getActiveJobs().then(querySnapshot => {
           this.supportrequests = this.getSupportRequests(querySnapshot);
-          this.firstsetResults=this.supportrequests;
-          this.pageNavStatusCheck();
+          if(this.supportrequests.length <this.pageSize) {
+                     this.pageNavButton=false;
+                } else {
+                     this.pageNavButton=true;
+                     this.firstButtonStatus=false;
+                     this.prevNavStatus=false;
+                     this.nextNavStatus=true;
+                     this.lastButtonStatus=true;
+                }
         });
       } else {
         if (filter_status) {
@@ -269,8 +243,15 @@ export default {
         }
         this.getJobsByStatus(this.filterStatus).then(querySnapshot => { 
           this.supportrequests = this.getSupportRequests(querySnapshot);
-          this.firstsetResults=this.supportrequests;
-          this.pageNavStatusCheck();
+          if(this.supportrequests.length <this.pageSize) {
+                    this.pageNavButton=false;
+                } else {
+                     this.pageNavButton=true;
+                     this.firstButtonStatus=false;
+                     this.prevNavStatus=false;
+                     this.nextNavStatus=true;
+                     this.lastButtonStatus=true;
+                }
         });
       } 
     }
@@ -285,4 +266,3 @@ export default {
   }
 };
 </script>
-

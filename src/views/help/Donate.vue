@@ -1,6 +1,13 @@
 <template>
   <div>
-    <div class="container mt-4">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <b-breadcrumb :items="breadcrumbs" />
+        </div>
+      </div>
+    </div>
+    <div class="container">
       <div class="animated fadeIn">
         <div>
           <div class="row">
@@ -10,15 +17,26 @@
                   <div class="row">
                     <div class="col-sm-12">
                       <div>
-                        <div v-if="error" class="alert alert-danger">{{error}}</div>
+                        <div v-if="error" class="alert alert-danger">
+                          {{ error }}
+                        </div>
                         <div
-                          v-if="status==='submitted'"
+                          v-if="status === 'submitted'"
                           class="alert alert-success"
-                        >Thank you !!!. You made a difference. Your offer submitted successfully.
-                        Your Reference number is {{refId}}</div>
+                        >
+                          Thank you !!!. You made a difference. Your offer
+                          submitted successfully. Your Reference number is
+                          {{ refId }}
+                        </div>
                       </div>
-                      <h4 class="mb-4 text-primary">Donation Promise Register</h4>
-                      <b-form-group label="Category of the items" label-for="basicSelect" :label-cols="3">
+                      <h4 class="mb-4 text-primary">
+                        Donation Promise Register
+                      </h4>
+                      <b-form-group
+                        label="Category of the items"
+                        label-for="basicSelect"
+                        :label-cols="3"
+                      >
                         <b-form-select
                           id="basicSelect"
                           :plain="true"
@@ -143,8 +161,15 @@
                       <fieldset role="group" class="b-form-group form-group">
                         <div role="group" class>
                           <label for="requestfor">Submitted by</label>
-                          <div id="requestfor" role="radiogroup" tabindex="-1" class>
-                            <div class="custom-control custom-radio custom-control-inline">
+                          <div
+                            id="requestfor"
+                            role="radiogroup"
+                            tabindex="-1"
+                            class
+                          >
+                            <div
+                              class="custom-control custom-radio custom-control-inline"
+                            >
                               <input
                                 type="radio"
                                 id="requestfor1"
@@ -154,9 +179,15 @@
                                 class="custom-control-input"
                                 v-model="form.requesting_for"
                               />
-                              <label for="requestfor1" class="custom-control-label">Self</label>
+                              <label
+                                for="requestfor1"
+                                class="custom-control-label"
+                                >Self</label
+                              >
                             </div>
-                            <div class="custom-control custom-radio custom-control-inline">
+                            <div
+                              class="custom-control custom-radio custom-control-inline"
+                            >
                               <input
                                 type="radio"
                                 id="requestfor2"
@@ -165,7 +196,11 @@
                                 class="custom-control-input"
                                 v-model="form.requesting_for"
                               />
-                              <label for="requestfor2" class="custom-control-label">On behalf of others</label>
+                              <label
+                                for="requestfor2"
+                                class="custom-control-label"
+                                >On behalf of others</label
+                              >
                             </div>
                           </div>
                         </div>
@@ -187,7 +222,9 @@
                     <div class="col-sm-12">
                       <fieldset role="group" class="b-form-group form-group">
                         <div role="group" class>
-                          <label for="fullname">Full Name of the person submitting request</label>
+                          <label for="fullname"
+                            >Full Name of the person submitting request</label
+                          >
                           <input
                             id="fullname"
                             type="text"
@@ -256,8 +293,17 @@
                   <div class="row">
                     <div class="col-sm-8">
                       <div>
-                        <p>This register is to record a promise of a donation to a person in need. Please do not take the donation but record the promise here and advise them that we will be in touch once we have identified a suitable person through the volunteer network.</p>
-                        <p>By submitting, I am agreeing the T&C and sharing all the above information with the support team.</p>
+                        <p>
+                          This register is to record a promise of a donation to
+                          a person in need. Please do not take the donation but
+                          record the promise here and advise them that we will
+                          be in touch once we have identified a suitable person
+                          through the volunteer network.
+                        </p>
+                        <p>
+                          By submitting, I am agreeing the T&C and sharing all
+                          the above information with the support team.
+                        </p>
                       </div>
                     </div>
                     <div class="col-sm-4">
@@ -266,7 +312,9 @@
                           type="button"
                           class="btn btn-primary"
                           @click="submitDonation"
-                        >Agree & Submit Donation</button>
+                        >
+                          Agree & Submit Donation
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -279,18 +327,21 @@
     </div>
   </div>
 </template>
-
 <script>
 import firebase from "firebase";
 import { mapGetters } from "vuex";
 export default {
   data() {
-    return {     
+    return {
+      breadcrumbs: [
+        { text: "Home", to: "/" },
+        { text: "Donate", active: true },
+      ],
       form: {
         donation: {
           category: "General",
           title: "",
-          message: ""
+          message: "",
         },
         requesting_for: "self",
         contact: {
@@ -298,38 +349,38 @@ export default {
           lastname: "",
           address: "",
           phone: "",
-          email: ""
+          email: "",
         },
         requestor: {
           name: "",
           address: "",
           phone: "",
-          email: ""
+          email: "",
         },
-        donation_status: "new"
+        donation_status: "new",
       },
       error: null,
       status: "new",
-      refId: null,      
+      refId: null,
     };
   },
-  created() {    
-    this.prepopulate();    
+  created() {
+    this.prepopulate();
   },
   computed: {
     ...mapGetters({
       user: "user",
-      app_settings: "app_settings"
-    })
+      app_settings: "app_settings",
+    }),
   },
-  methods: {     
-    prepopulate(){
-      if(this.user && this.user.data){
-          this.form.requestor.name = this.user.data.displayName;      
-          this.form.requestor.email = this.user.data.email.toLowerCase();
-      }      
-    },    
-    resetForm(){
+  methods: {
+    prepopulate() {
+      if (this.user && this.user.data) {
+        this.form.requestor.name = this.user.data.displayName;
+        this.form.requestor.email = this.user.data.email.toLowerCase();
+      }
+    },
+    resetForm() {
       this.form.donation.category = "General";
       this.form.donation.title = "";
       this.form.donation.message = "";
@@ -345,7 +396,8 @@ export default {
     },
     submitDonation() {
       if (this.user.loggedIn && this.user.data) {
-        this.form.user_displayName = this.user.data.displayName || this.user.data.email;
+        this.form.user_displayName =
+          this.user.data.displayName || this.user.data.email;
         this.form.user_email = this.user.data.email;
       } else {
         this.form.user_displayName = "";
@@ -354,41 +406,45 @@ export default {
       this.form.timestamp = new Date();
       this.form.contact.email = this.form.contact.email.toLowerCase();
       this.form.requestor.email = this.form.requestor.email.toLowerCase();
-      
+
       if (!this.form.donation.title || !this.form.donation.message) {
         this.error = "Enter title and description";
         this.status = "error";
-        window.scrollTo(0,0);
+        window.scrollTo(0, 0);
         return;
-      } 
-      if (!this.form.contact.firstname || !this.form.contact.address || 
-          !this.form.contact.phone || !this.form.contact.email) {
+      }
+      if (
+        !this.form.contact.firstname ||
+        !this.form.contact.address ||
+        !this.form.contact.phone ||
+        !this.form.contact.email
+      ) {
         this.error = "Enter all donor details";
         this.status = "error";
-        window.scrollTo(0,0);
+        window.scrollTo(0, 0);
         return;
-      } 
-      var db = firebase.firestore();      
+      }
+      var db = firebase.firestore();
       db.collection("donations")
         .add(this.form)
-        .then(docRef => {
+        .then((docRef) => {
           this.status = "submitted";
           this.error = null;
           this.refId = docRef.id;
           setTimeout(() => {
             this.status = "new";
             this.error = null;
-            this.$router.push({ path: '/welcome'})
+            this.$router.push({ path: "/welcome" });
           }, 10 * 1000);
         })
-        .catch(error => {
+        .catch((error) => {
           this.error = error;
           this.status = "error";
         });
-      
+
       this.resetForm();
-      window.scrollTo(0,0);
-    }
-  }
+      window.scrollTo(0, 0);
+    },
+  },
 };
 </script>
