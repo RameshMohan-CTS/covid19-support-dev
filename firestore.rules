@@ -8,30 +8,74 @@ service cloud.firestore {
   }
   function isAdmin(){
    return false;
-  }
+  }      
+// user exists function for future use 
+//  function userExists() {
+// return exists(/databases/$(database)/documents/user_profiles/$(request.auth.uid));
+//    }
+// End of user  exists 
   match /databases/{database}/documents {
+// rules for donation collections
     match /donations/{donation} {
-      allow write: if true;
-      allow read: if true;
-  	}
-    match /support_requests/{support_request} {
-      allow read, write: if true;
-  	}
-	  match /can_support/{can_support} {
-      allow read, write : if true;
-	  }
-	  match /categories/{category} {
-      allow read : if true;
-  	}
-  	match /messages/{message} {
-      allow read, write: if true;
-  	}
-    match /application_settings/{application_setting} {
-      allow read : if true;
       allow write: if request.auth != null;
+      allow read: if request.auth != null;
+      allow delete: if get(/databases/$(database)/documents/user_profiles/$(request.auth.uid)).data.ismoderator == true;
   	}
-    match /{document=**} {
+// rules for support_requests collections
+    match /support_requests/{support_request} {
       allow read, write: if request.auth != null;
+      allow delete: if get(/databases/$(database)/documents/user_profiles/$(request.auth.uid)).data.ismoderator == true;
+  	}
+// rules for can_support collections
+	  match /can_support/{can_support} {
+      allow write : if request.auth != null;
+      allow read: if request.auth != null;
+      allow delete: if get(/databases/$(database)/documents/user_profiles/$(request.auth.uid)).data.ismoderator == true;
+	  }
+// rules for categories collections
+	  match /categories/{category} {
+      allow read : if request.auth != null;
+      allow write: if get(/databases/$(database)/documents/user_profiles/$(request.auth.uid)).data.ismoderator == true;
+      allow delete: if get(/databases/$(database)/documents/user_profiles/$(request.auth.uid)).data.ismoderator == true;
+  	}
+// rules for messages collections
+  	match /messages/{message} {
+      allow read : if request.auth != null;
+      allow write: if request.auth != null;
+      allow delete: if get(/databases/$(database)/documents/user_profiles/$(request.auth.uid)).data.ismoderator == true;
+  	}
+// rules for group collections
+  	match /groups/{group} {
+      allow read : if request.auth != null;
+      allow write: if request.auth != null;
+      allow delete: if get(/databases/$(database)/documents/user_profiles/$(request.auth.uid)).data.ismoderator == true;
+  	}
+// rules for application_settings collections
+    match /application_settings/{application_setting} {
+      allow read : if request.auth != null;
+      allow write: if get(/databases/$(database)/documents/user_profiles/$(request.auth.uid)).data.ismoderator == true;
+      allow delete: if get(/databases/$(database)/documents/user_profiles/$(request.auth.uid)).data.ismoderator == true;
+  	}
+// rules for comments collections
+  	match /comments/{comment} {
+      allow read : if request.auth != null;
+      allow write: if request.auth != null;
+      allow delete: if get(/databases/$(database)/documents/user_profiles/$(request.auth.uid)).data.ismoderator == true;
+    }
+// rules for user_profiles collections
+  	match /user_profiles/{user_profile} {
+      allow read : if request.auth != null;
+      allow write: if request.auth != null;
+      allow update: if request.auth != null;
+    }
+// rules for audit collections
+  	match /audit/{audit} {
+      allow read : if request.auth != null;
+      allow write: if request.auth != null;
+      allow delete: if get(/databases/$(database)/documents/user_profiles/$(request.auth.uid)).data.ismoderator == true;
+    }
+    match /{document=**} {
+      allow read, write: if get(/databases/$(database)/documents/user_profiles/$(request.auth.uid)).data.ismoderator == true;
     }
   }
 }

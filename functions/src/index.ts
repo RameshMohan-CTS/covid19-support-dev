@@ -12,7 +12,7 @@ const isSuperAdmin = (email:string) => superadmins.indexOf(email.toLowerCase()) 
 const isAdmin = (context:any) => doesAuthTokenExist(context) && context.auth?.token.admin === true;
 const isModerator = (context:any) => doesAuthTokenExist(context) && context.auth?.token.moderator === true;
 const isVerifiedVolunteer = (context:any) => doesAuthTokenExist(context) && context.auth?.token.verifiedvolunteer === true;
-const canAssignAdminRole = (data:any,context:any) => doesAuthTokenExist(context) && (isAdmin(context) || isSuperAdmin(data.email));
+const canAssignAdminRole = (data:any,context:any) => isSuperAdmin(data.email) || ( doesAuthTokenExist(context) && (isAdmin(context) || isSuperAdmin(data.email)) );
 const canAssignModeratorRole =  (data:any, context:any) => canAssignAdminRole(data,context) || isModerator(context) ;
 const canVerifyVolunteerRole = (data:any,context:any) => canAssignModeratorRole(data,context) || isVerifiedVolunteer(context);
 const maskText = (text:string) => text.split("").map((v:string,i:number)=>  (i < 4 || i >8) ? v : '*').join('');
@@ -23,8 +23,11 @@ export const markUserAsAdmin = (email:string) => {
         newProfile.isadmin = true;
         var userRef = admin.firestore().collection('user_profiles').doc(email.toLowerCase());
         userRef.set(newProfile,{merge: true}).then((res)=>{
+            console.log("Data from user profiles");
             resolve();
         }).catch((ex)=>{
+            console.log("Unable to read Data from user profiles");
+            console.log(ex);
             reject();
         })
     })
@@ -115,23 +118,32 @@ export const registerUserAsVolunteer = functions.https.onCall((data,context)=>{
 });
 
 export const assignRole = functions.https.onCall((data,context)=>{
+    console.log("Assigning Role");
+    console.log(data);
     if(data && data.email && data.typeofrole){
         if(data.typeofrole ===`admin`){
+            console.log("admin");
             return admin.auth().getUserByEmail(data.email).then(user =>{
+                console.log(user);
                 if(canAssignAdminRole(data,context)){
+                    console.log("Yes i can assign role");
                     let adminClaims = {
                         admin:true,
                         moderator: user && user.customClaims && user.customClaims.moderator,
                         verifiedvolunteer : user && user.customClaims && user.customClaims.verifiedvolunteer,
                     };
                     return admin.auth().setCustomUserClaims(user.uid,adminClaims).then(async (ref)=>{
+                        console.log("Set the claims");
                         await markUserAsAdmin(data.email);
                         return ref;
                     });
                 }  else{
+                    console.log("Only admins can cascade admin rights");
                     throw new Error("Only admins can cascade admin rights");
                 }      
             }).then(()=>{
+                
+                console.log("Added user as admin");
                 return {
                     data: `Added user ${data.email} as admin`
                 }
@@ -183,6 +195,7 @@ export const assignRole = functions.https.onCall((data,context)=>{
                 return err;
             })
         } else {
+            console.log("not a valid role");
             return {
                 data: `Not a valid role`
             }
