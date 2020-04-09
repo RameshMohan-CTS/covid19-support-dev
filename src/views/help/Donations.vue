@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="container mt-2">
+    <div class="container">
         <div class="row">
             <div class="col-sm-12">
             <b-breadcrumb :items="breadcrumbs" />
@@ -93,7 +93,7 @@ export default {
       breadcrumbs : [
                 { text : "Home", to : "/" },
                 { text : "Donations", active : true }
-            ],
+            ]
     };
   },
   watch: {

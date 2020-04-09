@@ -11,10 +11,10 @@
         <div class="card">
           <div class="card-header">Login with social credentials</div>
           <div class="card-body text-center">
-            <a class="btn btn-primary text-white p-2 mx-2" @click="signInWithGoogle">
+            <a class="btn btn-primary text-white p-2 m-2" @click="signInWithGoogle">
               <i class="fa fa-google"></i> Sign in With Google
             </a>
-            <a class="btn btn-primary text-white mx-2 p-2" @click="signInWithFacebook">
+            <a class="btn btn-primary text-white m-2 p-2" @click="signInWithFacebook">
               <i class="fa fa-facebook"></i> Sign in With Facebook
             </a>
           </div>
@@ -172,7 +172,10 @@ export default {
             const updateUserProfile = firebase.functions().httpsCallable("updateUserProfile");
             updateUserProfile({
               username: data.user.email,
+              uid: data.user.uid,
               fullname : data.user.displayName ||  data.user.fullname || "-",
+              firstname : data.user.firstname || '',
+              lastname : data.user.lastname || '',
               last_login_time : new Date()
             });
             this.$store.dispatch("fetchUser", data.user);
@@ -194,7 +197,10 @@ export default {
             const updateUserProfile = firebase.functions().httpsCallable("updateUserProfile");
             updateUserProfile({
               username: result.user.email,
+              uid: result.user.uid,
               fullname : result.user.displayName || result.user.fullname || "",
+              firstname : result.user.firstname || '',
+              lastname : result.user.lastname || '',
               last_login_time : new Date()
             })            
             this.$store.dispatch("fetchUser", result.user);
@@ -214,7 +220,10 @@ export default {
             const updateUserProfile = firebase.functions().httpsCallable("updateUserProfile");
             updateUserProfile({
               username: result.user.email,
+              uid: result.user.uid,
               fullname : result.user.displayName || result.user.fullname || "",
+              firstname : result.user.firstname || '',
+              lastname : result.user.lastname || '',
               last_login_time : new Date()
             })            
             this.$store.dispatch("fetchUser", result.user);
@@ -242,13 +251,19 @@ export default {
           this.error = null;
           result.user
             .updateProfile({
+              fullname : this.form.name || result.user.displayName || result.user.fullname || "",
+              firstname : this.form.name ? this.form.name.split(" ")[0] : '' ,
+              lastname : this.form.name ? this.form.name.split(" ").filter((item,index)=> index !==0).join(" ") : '' ,
               displayName: this.form.name || "User"
             })
             .then(msg => {
               const updateUserProfile = firebase.functions().httpsCallable("updateUserProfile");
               updateUserProfile({
                 username: this.form.email,
+                uid: result.user.uid,
                 fullname : this.form.name || result.user.displayName || result.user.fullname || "",
+                firstname : this.form.name ? this.form.name.split(" ")[0] : '' ,
+                lastname : this.form.name ? this.form.name.split(" ").filter((item,index)=> index !==0).join(" ") : '' ,
                 last_login_time : new Date()
               })
               this.$store.dispatch("fetchUser", result.user);
