@@ -12,7 +12,7 @@ const isSuperAdmin = (email:string) => superadmins.indexOf(email.toLowerCase()) 
 const isAdmin = (context:any) => doesAuthTokenExist(context) && context.auth?.token.admin === true;
 const isModerator = (context:any) => doesAuthTokenExist(context) && context.auth?.token.moderator === true;
 const isVerifiedVolunteer = (context:any) => doesAuthTokenExist(context) && context.auth?.token.verifiedvolunteer === true;
-const canAssignAdminRole = (data:any,context:any) => doesAuthTokenExist(context) && (isAdmin(context) || isSuperAdmin(data.email));
+const canAssignAdminRole = (data:any,context:any) => isSuperAdmin(data.email) || ( doesAuthTokenExist(context) && (isAdmin(context) || isSuperAdmin(data.email)) );
 const canAssignModeratorRole =  (data:any, context:any) => canAssignAdminRole(data,context) || isModerator(context) ;
 const canVerifyVolunteerRole = (data:any,context:any) => canAssignModeratorRole(data,context) || isVerifiedVolunteer(context);
 const maskText = (text:string) => text.split("").map((v:string,i:number)=>  (i < 4 || i >8) ? v : '*').join('');
