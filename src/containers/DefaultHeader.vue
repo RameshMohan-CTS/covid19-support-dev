@@ -46,8 +46,8 @@
         v-if="user.loggedIn && user.data && (user.data.admin || user.data.moderator || user.data.verifiedvolunteer)"
       >Groups</b-nav-item> -->
       <!-- <b-nav-item class="py-2 px-3" to="/about">About</b-nav-item>-->
-      <b-nav-item class="py-2 px-2" to="/contact">Contact</b-nav-item> 
       <b-nav-item class="py-2 px-2" to="/groups" title="Groups" v-if="user.loggedIn && user.data && (user.data.admin || user.data.moderator)"><i class="fa fa-users"></i></b-nav-item> 
+      <b-nav-item class="py-2 px-2" to="/contact" title="Contact us"><i class="fa fa-phone"></i></b-nav-item> 
       <b-nav-item class="py-2 px-2" to="/contact/moderator" title="Contact Moderator"><i class="fa fa-envelope"></i></b-nav-item> 
     </b-navbar-nav>
     <b-navbar-nav class="ml-auto" style="margin-right:20px;">
