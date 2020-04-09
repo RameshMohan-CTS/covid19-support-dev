@@ -227,6 +227,38 @@ export const sendSupportRequestNotification = functions.firestore.document('supp
     });
 });
 
+export const sendNotificationOnVolunteerRegistration = functions.firestore.document('can_support/{volunteer}')
+.onCreate((snap,ctx)=>{
+    const volunteerEmail : string = snap.id;
+    const data :any=snap.data();
+    if(volunteerEmail && volunteerEmail !== ""){
+        let authData = nodemailer.createTransport({
+            host:'smtp.gmail.com',
+            port:465,
+            secure:true,
+            auth:{
+                user:functions.config().admin_email.username,
+                pass:functions.config().admin_email.password
+            }
+        });
+        authData.sendMail({
+            from :'moderator@covid19-support-dev.web.app',
+            to:`${volunteerEmail}`,
+            subject:'Volunteer Registration Submitted',
+            text:`Hi ${data.user_displayName}, Thank you for your interest in registering as a volunteer.  
+            This is to confirm that Your request has been submitted successfully.`,
+            html:`<div>Hi ${data.user_displayName},<br/> Thank you for your interest in registering as a volunteer.  
+            This is to confirm that Your request has been submitted successfully.</div>`,
+        })
+        .then((res:any)=>{
+            console.log('successfully sent email');
+        })
+        .catch((err:any)=>{
+            console.log(err)
+        });
+    }    
+});
+
 export const sendDonationDetailsToDonor = functions.firestore.document('donations/{donation}')
 .onCreate((snap,ctx)=>{
     const donationid : string = snap.id;
@@ -283,7 +315,7 @@ export const sendDonationDetailsToVolunteer = functions.https.onCall((data,conte
             Message: ${data.donorPromiseMsg} <br/><br/>
             <b>Donor Contact details</b>
             Name: ${data.donorName}<br/>
-            Address: ${data.onorAddress}<br/> 
+            Address: ${data.donorAddress}<br/> 
             Phone: ${data.donorPhone}<br/> 
             email: ${data.donorEmail}
             </div>`,
@@ -302,3 +334,51 @@ export const sendDonationDetailsToVolunteer = functions.https.onCall((data,conte
         });
     }
   });
+
+  export const sendEmailOnSupportRequestAssigned = functions.https.onCall((data,context)=>{   
+    
+    if(data && data.volunteerEmail){
+
+        let authData = nodemailer.createTransport({
+        host:'smtp.gmail.com',
+        port:465,
+        secure:true,
+        auth:{
+            user:functions.config().admin_email.username,
+            pass:functions.config().admin_email.password
+        }
+    });
+        authData.sendMail({
+            from :'moderator@covid19-support-dev.web.app',
+            to:`${data.beneficiaryEmail}`,
+            cc:`${data.volunteerEmail}`,            
+            subject:'Support Request Assigned',
+
+            text:`Hi ${data.beneficiaryName}, your request with below Id and title has been assigned 
+            to a volunteer marked in this email, who will contact you to do the needful.
+            Request Id: ${data.requestId}, Request Title: ${data.requestTitle}, 
+            Volunteer Email: ${data.volunteerEmail}`,
+
+            html:`<div>Hi ${data.beneficiaryName},<br/> 
+            your request with below Id and title has been assigned 
+            to a volunteer, who will contact you to do the needful.<br/><br/>             
+            Request Id: ${data.requestId}<br/>
+            Request Title: ${data.requestTitle}<br/>             
+            Volunteer Email: ${data.volunteerEmail}
+            </div>`,
+        })
+        .then((res:any)=>{
+            console.log('email sent successfully');            
+            return {
+                data: `email sent successfully`
+            }
+        })
+        .catch((err:any)=>{
+            console.log(err)
+            return {
+                data: `error sending email: ${err}`
+            }
+        });
+    }
+  });
+
