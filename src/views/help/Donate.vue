@@ -7,7 +7,7 @@
         </div>
       </div>
     </div>
-    <div class="container mt-4">
+    <div class="container">
       <div class="animated fadeIn">
         <div>
           <div class="row">
@@ -327,7 +327,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import firebase from "firebase";
 import { mapGetters } from "vuex";
