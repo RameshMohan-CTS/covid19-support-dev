@@ -1,5 +1,13 @@
 <template>
-  <div class="container pt-4">
+  <div>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+            <b-breadcrumb :items="breadcrumbs" />
+            </div>
+        </div>
+    </div>
+      <div class="container">
       <div class="row">
           <div class="col-sm-12">
               <h4 class="text-primary mb-4">Application Settings</h4>
@@ -96,6 +104,7 @@
           </div>
       </div>
   </div>
+  </div>
 </template>
 
 <script>
@@ -111,6 +120,11 @@ export default {
     },
     data(){
         return {
+            breadcrumbs : [
+                { text : "Home", to : "/" },
+                { text : "Admin", to : "/admin" },
+                { text : "Application Settings", active : true }
+            ],
             error: "",
             status: ""
         }

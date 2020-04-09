@@ -3,6 +3,20 @@
     {
       "collectionGroup": "donations",
       "queryScope": "COLLECTION",
+      "fields": [        
+        {
+          "fieldPath": "picked_up_by",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "donations",
+      "queryScope": "COLLECTION",
       "fields": [
         {
           "fieldPath": "donation_status",
@@ -10,6 +24,34 @@
         },
         {
           "fieldPath": "picked_up_by",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "donations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "donation_status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "donations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "donation_status",
           "order": "ASCENDING"
         },
         {
@@ -46,6 +88,34 @@
         },
         {
           "fieldPath": "user_email",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "donations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "picked_up_by",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "donations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "picked_up_by",
           "order": "ASCENDING"
         },
         {
@@ -163,6 +233,20 @@
         {
           "fieldPath": "username",
           "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "user_profiles",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "isverifiedvolunteer",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "username",
+          "order": "DESCENDING"
         }
       ]
     },

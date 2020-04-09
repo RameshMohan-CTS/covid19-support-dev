@@ -12,7 +12,7 @@ import './registerServiceWorker'
 
 Vue.config.productionTip = false;
 Vue.use(Vuelidate);
-Vue.use(BootstrapVue)
+Vue.use(BootstrapVue);
 
 console.info(`Firebase is loading from firebase project ${process.env.VUE_APP_FIREBASE_projectId}`);
 
@@ -46,14 +46,14 @@ const getInitialApplicationSettings = ()=>{
           .get()
           .then((docRef)=>{
               let appsettings = docRef.data();
-              updateStorewithInitialSettings(appsettings);
+              if(appsettings){
+                updateStorewithInitialSettings(appsettings);
+              } else {
+                updateStorewithInitialSettings(config.initial_app_settings);
+              }
               resolve(appsettings);
           }).catch((ex)=>{
-              updateStorewithInitialSettings({
-                app_title : "Welcome",
-                support_categories: [],
-                donation_categories: []
-              });
+              updateStorewithInitialSettings(config.initial_app_settings);
               console.log(ex);
               reject();
           })    

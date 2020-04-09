@@ -11,8 +11,11 @@
         <div class="card">
           <div class="card-header">Login with social credentials</div>
           <div class="card-body text-center">
-            <a class="btn btn-primary text-white p-2" @click="signInWithGoogle">
+            <a class="btn btn-primary text-white p-2 mx-2" @click="signInWithGoogle">
               <i class="fa fa-google"></i> Sign in With Google
+            </a>
+            <a class="btn btn-primary text-white mx-2 p-2" @click="signInWithFacebook">
+              <i class="fa fa-facebook"></i> Sign in With Facebook
             </a>
           </div>
         </div>
@@ -184,6 +187,26 @@ export default {
     },
     signInWithGoogle() {
       const provider = new firebase.auth.GoogleAuthProvider();
+      const auth = firebase.auth().signInWithPopup(provider);
+      auth
+        .then(result => {
+          if (result && result.user) {
+            const updateUserProfile = firebase.functions().httpsCallable("updateUserProfile");
+            updateUserProfile({
+              username: result.user.email,
+              fullname : result.user.displayName || result.user.fullname || "",
+              last_login_time : new Date()
+            })            
+            this.$store.dispatch("fetchUser", result.user);
+            this.$router.replace({ name: "profile" });
+          }
+        })
+        .catch(err => {
+          this.error = err.message;
+        });
+    },
+    signInWithFacebook() {
+      const provider =new firebase.auth.FacebookAuthProvider();      
       const auth = firebase.auth().signInWithPopup(provider);
       auth
         .then(result => {

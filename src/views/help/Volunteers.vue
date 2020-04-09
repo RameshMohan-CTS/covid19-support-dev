@@ -1,6 +1,11 @@
 <template>
     <div>
-        <div class="container mt-4">
+    <div class="container mt-2">
+        <div class="row">
+            <div class="col-sm-12">
+            <b-breadcrumb :items="breadcrumbs" />
+        </div> 
+     </div>
             <div class="row">
               <b-modal title="Volunteer Details" v-model="showVolunteerDetails" @ok="showVolunteerDetails=false;" ok-only ok-variant="primary">
                 <div class="row">
@@ -61,10 +66,16 @@
                     <div class="col-sm-12" v-if="volunteers">
                         <div class="card">
                             <div class="card-header"><span class="btn btn-primary"><b>Volunteers</b></span>
-                                <button type="button" class="btn btn-primary float-right" @click="lastPage()">&gt;&gt;</button>
-                                <button type="button" class="btn btn-primary float-right ml-1" @click="nextPage()">&gt;</button>
-                                <button type="button" class="btn btn-primary float-right" @click="prevPage()">&lt;</button>
-                                <button type="button" class="btn btn-primary float-right" @click="fetchJobs()">&lt;&lt;</button>
+                               <span v-if="pageNavButton">
+							    <button type="button" class="btn btn-primary float-right" @click="lastPage()" v-if="lastButtonStatus">&gt;&gt;</button>
+                                <button type="button" class="btn btn-primary float-right" v-if="!lastButtonStatus">&gt;&gt;</button>
+                                <button type="button" class="btn btn-primary float-right ml-1" @click="nextPage()" v-if="nextNavStatus">&gt;</button>
+                                <button type="button" class="btn btn-primary float-right ml-1" v-if="!nextNavStatus">&gt;</button>
+                                <button type="button" class="btn btn-primary float-right" @click="prevPage()" v-if="prevNavStatus">&lt;</button>
+                                <button type="button" class="btn btn-primary float-right" v-if="!prevNavStatus">&lt;</button>
+                                <button type="button" class="btn btn-primary float-right" @click="fetchJobs()" v-if="firstButtonStatus">&lt;&lt;</button>
+                                <button type="button" class="btn btn-primary float-right" v-if="!firstButtonStatus">&lt;&lt;</button>
+							  </span>
                             </div>
                             <div v-for="volunteer in volunteers" :key="volunteer.id">
                                 <div class="row">
@@ -121,7 +132,16 @@ export default {
                 isavailablevolunteer: "All"
             },
             showVolunteerDetails: false,
-            currentVolunteer : null
+			currentVolunteer : null,
+			pageNavButton: false,
+            firstButtonStatus: false,
+            prevNavStatus: false,
+            nextNavStatus: true,
+            lastButtonStatus: true,
+            breadcrumbs : [
+                { text : "Home", to : "/" },
+                { text : "Volunteers List", active : true }
+            ]
         };
     },
     created() {
@@ -190,6 +210,15 @@ export default {
                     this.volunteers = this.getvolunteers(querySnapshot);
                     if (this.volunteers.length < this.pageSize) {
                         this.lastPage();
+                        this.firstButtonStatus=true;
+                        this.prevNavStatus=true;
+                        this.nextNavStatus=false;
+                        this.lastButtonStatus=false;
+                    } else {
+                        this.firstButtonStatus=true;
+                        this.prevNavStatus=true;
+                        this.nextNavStatus=true;
+                        this.lastButtonStatus=false;
                     }
                 });
         },
@@ -205,6 +234,15 @@ export default {
                     this.volunteers = this.getvolunteers(querySnapshot);
                     if (this.volunteers.length < this.pageSize) {
                         this.fetchJobs();
+                        this.firstButtonStatus=false;
+                        this.prevNavStatus=true;
+                        this.nextNavStatus=true;
+                        this.lastButtonStatus=true;
+                    } else {
+                        this.firstButtonStatus=true;
+                        this.prevNavStatus=true;
+                        this.nextNavStatus=true;
+                        this.lastButtonStatus=true;
                     }
                 });
         },
@@ -216,7 +254,11 @@ export default {
                 .get()
                 .then(querySnapshot => {
                     this.volunteers = this.getvolunteers(querySnapshot);
-                });
+                    this.firstButtonStatus=true;
+                    this.prevNavStatus=true;
+                    this.nextNavStatus=false;
+                    this.lastButtonStatus=false;
+                });                 
         },
         getvolunteers(querySnapshot) {
             let categories_response = [];
@@ -245,7 +287,15 @@ export default {
             this.volunteers = [];
             this.getVolunteerList().then(querySnapshot => {
                 this.volunteers = this.getvolunteers(querySnapshot);
-                this.pageNavStatusCheck();
+                if(this.volunteers.length <this.pageSize) {
+                     this.pageNavButton=false;
+                } else {
+                     this.pageNavButton=true;
+                     this.firstButtonStatus=false;
+                     this.prevNavStatus=false;
+                     this.nextNavStatus=true;
+                     this.lastButtonStatus=true;
+                }
             });
         }
     }

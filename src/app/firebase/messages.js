@@ -8,7 +8,7 @@ export const messages_get_recent_messages = (msg_read_status) =>{
         db.collection("messages")
         .orderBy("timestamp","desc")
         .where("msg_read","==", msg_read_status ? true:false)
-        .limit(100)
+        .limit(20)
         .get()
         .then(querySnapshot => {
             let mymessages = [];
