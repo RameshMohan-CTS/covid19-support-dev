@@ -8,6 +8,11 @@
       </div>
     </div>
     <div class="container px-4">
+      <div class="row mb-2">
+        <div class="col-sm-12 text-right">
+          <button class="btn btn-success">Leave a message to moderator</button>
+        </div>
+      </div>
       <div class="row">
         <div class="col-sm-12">
           <MarkdownDisplay
