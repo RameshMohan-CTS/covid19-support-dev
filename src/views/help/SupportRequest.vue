@@ -411,6 +411,7 @@ export default {
           "pickedup",
           this.user.data.email
         );
+        this.sendEmailNotificationOnAssigned(this.user.data.email);
         await this.fetchAuditHistory();
       }
     },
@@ -567,16 +568,33 @@ export default {
           "pickedup",
           this.volunteerEmail
         );
-        await this.fetchAuditHistory();
-        
-        setTimeout(() => {
-          this.success = "Successfully assigned";
-        }, 5 * 1000)        
-        //this.sendEmailToVolunteer();
+        await this.fetchAuditHistory();        
+        this.success = "Successfully assigned";       
+
+        this.sendEmailNotificationOnAssigned(this.volunteerEmail);
       }
     },
 
-
+    sendEmailNotificationOnAssigned(volntrEmail) {
+      const sendEmail = firebase
+        .functions()
+        .httpsCallable("sendEmailOnSupportRequestAssigned");
+      sendEmail({
+        beneficiaryEmail: this.supportrequest.contact.email + ';' +  this.supportrequest.requestor.email,  
+        beneficiaryName:  this.supportrequest.contact.name,   
+        volunteerEmail: volntrEmail,
+        requestId: this.$route.params.supportrequestid,
+        requestTitle: this.supportrequest.request.title        
+      })
+        .then(
+          setTimeout(() => {
+            this.success = "Successfully assigned and email sent";
+          }, 5 * 1000)
+        )
+        .catch((err) => {
+          console.log(err);
+        });      
+    }
   },
 };
 </script>
