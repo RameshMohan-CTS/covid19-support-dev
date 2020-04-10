@@ -15,7 +15,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - name: Tools Setup & Dependencies installation
-     run: |
+      run: |
        npm install -g yarn firebase-tools;
        yarn setup;
    #- name: Build  & Deploy (covid19-support-dev)
