@@ -634,6 +634,11 @@ export default {
             this.form.personal.mobile = vol.personal.mobile;
             this.form.personal.altmobile = vol.personal.altmobile;
             this.form.personal.email = vol.personal.email.toLowerCase();
+            if(vol.personal.email != "") {
+                this.form.personal.email = vol.personal.email.toLowerCase();
+            } else {
+                 this.form.personal.email=this.user.data.email.toLowerCase();
+            }       
             this.form.address.housenumber = vol.address.housenumber;
             this.form.address.buildname = vol.address.buildname;
             this.form.address.address1 = vol.address.address1;
