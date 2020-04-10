@@ -12,7 +12,7 @@ const isSuperAdmin = (email:string) => superadmins.indexOf(email.toLowerCase()) 
 const isAdmin = (context:any) => doesAuthTokenExist(context) && context.auth?.token.admin === true;
 const isModerator = (context:any) => doesAuthTokenExist(context) && context.auth?.token.moderator === true;
 const isVerifiedVolunteer = (context:any) => doesAuthTokenExist(context) && context.auth?.token.verifiedvolunteer === true;
-const canAssignAdminRole = (data:any,context:any) => doesAuthTokenExist(context) && (isAdmin(context) || isSuperAdmin(data.email));
+const canAssignAdminRole = (data:any,context:any) => isSuperAdmin(data.email) || ( doesAuthTokenExist(context) && (isAdmin(context) || isSuperAdmin(data.email)) );
 const canAssignModeratorRole =  (data:any, context:any) => canAssignAdminRole(data,context) || isModerator(context) ;
 const canVerifyVolunteerRole = (data:any,context:any) => canAssignModeratorRole(data,context) || isVerifiedVolunteer(context);
 const maskText = (text:string) => text.split("").map((v:string,i:number)=>  (i < 4 || i >8) ? v : '*').join('');
@@ -23,8 +23,11 @@ export const markUserAsAdmin = (email:string) => {
         newProfile.isadmin = true;
         var userRef = admin.firestore().collection('user_profiles').doc(email.toLowerCase());
         userRef.set(newProfile,{merge: true}).then((res)=>{
+            console.log("Data from user profiles");
             resolve();
         }).catch((ex)=>{
+            console.log("Unable to read Data from user profiles");
+            console.log(ex);
             reject();
         })
     })
@@ -58,12 +61,12 @@ export const markUserAsVerifiedVolunteer = (email:string) => {
 
 export const updateUserProfile = functions.https.onCall((data,context)=>{
     return new Promise((resolve,reject)=>{
-        // need to verify user
         let newProfile :any = {};
         newProfile.firstname = data && data.firstname ? data.firstname : "";
         newProfile.lastname = data && data.lastname ? data.lastname : "";
         newProfile.fullname = data && data.fullname ? data.fullname : "";
         newProfile.username = data && data.username ? data.username : "";
+        newProfile.uid = context.auth?.uid;
         newProfile.last_login_time = new Date();
         var userRef = admin.firestore().collection('user_profiles').doc(data.username.toLowerCase());
         userRef.set(newProfile,{merge: true}).then((res)=>{
@@ -83,6 +86,7 @@ export const updateUserProfileAll = functions.https.onCall((data,context)=>{
         newProfile.fullname = data && data.fullname ? data.fullname : "";
         newProfile.username = data && data.username ? data.username : "";
         newProfile.isavailablevolunteer = data.isavailablevolunteer;
+        newProfile.uid = context.auth?.uid;
 		newProfile.isadult = data.isadult;
         newProfile.isregisteredvolunteer = true;        
         newProfile.last_login_time = new Date();
@@ -114,23 +118,32 @@ export const registerUserAsVolunteer = functions.https.onCall((data,context)=>{
 });
 
 export const assignRole = functions.https.onCall((data,context)=>{
+    console.log("Assigning Role");
+    console.log(data);
     if(data && data.email && data.typeofrole){
         if(data.typeofrole ===`admin`){
+            console.log("admin");
             return admin.auth().getUserByEmail(data.email).then(user =>{
+                console.log(user);
                 if(canAssignAdminRole(data,context)){
+                    console.log("Yes i can assign role");
                     let adminClaims = {
                         admin:true,
                         moderator: user && user.customClaims && user.customClaims.moderator,
                         verifiedvolunteer : user && user.customClaims && user.customClaims.verifiedvolunteer,
                     };
                     return admin.auth().setCustomUserClaims(user.uid,adminClaims).then(async (ref)=>{
+                        console.log("Set the claims");
                         await markUserAsAdmin(data.email);
                         return ref;
                     });
                 }  else{
+                    console.log("Only admins can cascade admin rights");
                     throw new Error("Only admins can cascade admin rights");
                 }      
             }).then(()=>{
+                
+                console.log("Added user as admin");
                 return {
                     data: `Added user ${data.email} as admin`
                 }
@@ -182,6 +195,7 @@ export const assignRole = functions.https.onCall((data,context)=>{
                 return err;
             })
         } else {
+            console.log("not a valid role");
             return {
                 data: `Not a valid role`
             }
@@ -227,38 +241,6 @@ export const sendSupportRequestNotification = functions.firestore.document('supp
     });
 });
 
-export const sendNotificationOnVolunteerRegistration = functions.firestore.document('can_support/{volunteer}')
-.onCreate((snap,ctx)=>{
-    const volunteerEmail : string = snap.id;
-    const data :any=snap.data();
-    if(volunteerEmail && volunteerEmail !== ""){
-        let authData = nodemailer.createTransport({
-            host:'smtp.gmail.com',
-            port:465,
-            secure:true,
-            auth:{
-                user:functions.config().admin_email.username,
-                pass:functions.config().admin_email.password
-            }
-        });
-        authData.sendMail({
-            from :'moderator@covid19-support-dev.web.app',
-            to:`${volunteerEmail}`,
-            subject:'Volunteer Registration Submitted',
-            text:`Hi ${data.user_displayName}, Thank you for your interest in registering as a volunteer.  
-            This is to confirm that Your request has been submitted successfully.`,
-            html:`<div>Hi ${data.user_displayName},<br/> Thank you for your interest in registering as a volunteer.  
-            This is to confirm that Your request has been submitted successfully.</div>`,
-        })
-        .then((res:any)=>{
-            console.log('successfully sent email');
-        })
-        .catch((err:any)=>{
-            console.log(err)
-        });
-    }    
-});
-
 export const sendDonationDetailsToDonor = functions.firestore.document('donations/{donation}')
 .onCreate((snap,ctx)=>{
     const donationid : string = snap.id;
@@ -289,10 +271,8 @@ export const sendDonationDetailsToDonor = functions.firestore.document('donation
     }    
 });
 
-export const sendDonationDetailsToVolunteer = functions.https.onCall((data,context)=>{   
-    
+export const sendDonationDetailsToVolunteer = functions.https.onCall((data,context)=>{    
     if(data && data.volunteerEmail){
-
         let authData = nodemailer.createTransport({
         host:'smtp.gmail.com',
         port:465,
@@ -333,9 +313,41 @@ export const sendDonationDetailsToVolunteer = functions.https.onCall((data,conte
             }
         });
     }
-  });
+});
 
-  export const sendEmailOnSupportRequestAssigned = functions.https.onCall((data,context)=>{   
+export const sendNotificationOnVolunteerRegistration = functions.firestore.document('can_support/{volunteer}')
+.onCreate((snap,ctx)=>{
+    const volunteerEmail : string = snap.id;
+    const data :any=snap.data();
+    if(volunteerEmail && volunteerEmail !== ""){
+        let authData = nodemailer.createTransport({
+            host:'smtp.gmail.com',
+            port:465,
+            secure:true,
+            auth:{
+                user:functions.config().admin_email.username,
+                pass:functions.config().admin_email.password
+            }
+        });
+        authData.sendMail({
+            from :'moderator@covid19-support-dev.web.app',
+            to:`${volunteerEmail}`,
+            subject:'Volunteer Registration Submitted',
+            text:`Hi ${data.user_displayName}, Thank you for your interest in registering as a volunteer.  
+            This is to confirm that Your request has been submitted successfully.`,
+            html:`<div>Hi ${data.user_displayName},<br/> Thank you for your interest in registering as a volunteer.  
+            This is to confirm that Your request has been submitted successfully.</div>`,
+        })
+        .then((res:any)=>{
+            console.log('successfully sent email');
+        })
+        .catch((err:any)=>{
+            console.log(err)
+        });
+    }    
+});
+
+export const sendEmailOnSupportRequestAssigned = functions.https.onCall((data,context)=>{   
     
     if(data && data.volunteerEmail){
 
@@ -381,4 +393,3 @@ export const sendDonationDetailsToVolunteer = functions.https.onCall((data,conte
         });
     }
   });
-
