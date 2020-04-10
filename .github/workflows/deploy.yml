@@ -14,37 +14,67 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: Tools Setup & Dependencies installation
-      run: |
-        npm install -g yarn firebase-tools;
-        yarn setup;
-    - name: Build  & Deploy (covid19-support-dev)
+   #- name: Tools Setup & Dependencies installation
+   #  run: |
+   #    npm install -g yarn firebase-tools;
+   #    yarn setup;
+   #- name: Build  & Deploy (covid19-support-dev)
+   #  env:
+   #    FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+   #    ADMIN_EMAIL_USERNAME: ${{secrets.ADMIN_EMAIL_USERNAME}}
+   #    ADMIN_EMAIL_PASSWORD: ${{secrets.ADMIN_EMAIL_PASSWORD}}
+   #    VUE_APP_FIREBASE_apiKey: ${{ secrets.VUE_APP_FIREBASE_apiKey }}
+   #    VUE_APP_FIREBASE_authDomain: ${{ secrets.VUE_APP_FIREBASE_authDomain }}
+   #    VUE_APP_FIREBASE_databaseURL: ${{ secrets.VUE_APP_FIREBASE_databaseURL }}
+   #    VUE_APP_FIREBASE_projectId: ${{ secrets.VUE_APP_FIREBASE_projectId }}
+   #  run: |
+   #    yarn build;
+   #    firebase use $VUE_APP_FIREBASE_projectId;
+   #    firebase functions:config:set admin_email.username=$ADMIN_EMAIL_USERNAME admin_email.password=$ADMIN_EMAIL_PASSWORD appsettings.authdomain=$VUE_APP_FIREBASE_authDomain --token $FIREBASE_TOKEN;
+   #    firebase deploy --token $FIREBASE_TOKEN;
+   #- name: Build  & Deploy (SVGT)
+   #  env:
+   #    FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+   #    ADMIN_EMAIL_USERNAME: ${{secrets.ADMIN_EMAIL_USERNAME}}
+   #    ADMIN_EMAIL_PASSWORD: ${{secrets.ADMIN_EMAIL_PASSWORD}}
+   #    VUE_APP_FIREBASE_apiKey: ${{ secrets.VUE_APP_FIREBASE_apiKey_SVGT }}
+   #    VUE_APP_FIREBASE_authDomain: ${{ secrets.VUE_APP_FIREBASE_authDomain_SVGT }}
+   #    VUE_APP_FIREBASE_databaseURL: ${{ secrets.VUE_APP_FIREBASE_databaseURL_SVGT }}
+   #    VUE_APP_FIREBASE_projectId: ${{ secrets.VUE_APP_FIREBASE_projectId_SVGT }}
+   #  run: |
+   #    yarn build;
+   #    firebase use $VUE_APP_FIREBASE_projectId --token $FIREBASE_TOKEN;
+   #    firebase functions:config:set admin_email.username=$ADMIN_EMAIL_USERNAME admin_email.password=$ADMIN_EMAIL_PASSWORD appsettings.authdomain=$VUE_APP_FIREBASE_authDomain --token $FIREBASE_TOKEN;
+   #    firebase deploy --only functions --token $FIREBASE_TOKEN;
+   #    firebase deploy --only hosting --token $FIREBASE_TOKEN;
+    - name: Build  & Deploy (covid19-support-test)
       env:
         FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
         ADMIN_EMAIL_USERNAME: ${{secrets.ADMIN_EMAIL_USERNAME}}
         ADMIN_EMAIL_PASSWORD: ${{secrets.ADMIN_EMAIL_PASSWORD}}
-        VUE_APP_FIREBASE_apiKey: ${{ secrets.VUE_APP_FIREBASE_apiKey }}
-        VUE_APP_FIREBASE_authDomain: ${{ secrets.VUE_APP_FIREBASE_authDomain }}
-        VUE_APP_FIREBASE_databaseURL: ${{ secrets.VUE_APP_FIREBASE_databaseURL }}
-        VUE_APP_FIREBASE_projectId: ${{ secrets.VUE_APP_FIREBASE_projectId }}
-      run: |
-        yarn build;
-        firebase use $VUE_APP_FIREBASE_projectId;
-        firebase functions:config:set admin_email.username=$ADMIN_EMAIL_USERNAME admin_email.password=$ADMIN_EMAIL_PASSWORD appsettings.authdomain=$VUE_APP_FIREBASE_authDomain --token $FIREBASE_TOKEN;
-        firebase deploy --token $FIREBASE_TOKEN;
-    - name: Build  & Deploy (SVGT)
-      env:
-        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-        ADMIN_EMAIL_USERNAME: ${{secrets.ADMIN_EMAIL_USERNAME}}
-        ADMIN_EMAIL_PASSWORD: ${{secrets.ADMIN_EMAIL_PASSWORD}}
-        VUE_APP_FIREBASE_apiKey: ${{ secrets.VUE_APP_FIREBASE_apiKey_SVGT }}
-        VUE_APP_FIREBASE_authDomain: ${{ secrets.VUE_APP_FIREBASE_authDomain_SVGT }}
-        VUE_APP_FIREBASE_databaseURL: ${{ secrets.VUE_APP_FIREBASE_databaseURL_SVGT }}
-        VUE_APP_FIREBASE_projectId: ${{ secrets.VUE_APP_FIREBASE_projectId_SVGT }}
+        VUE_APP_FIREBASE_apiKey: ${{ secrets.VUE_APP_FIREBASE_apiKey_TEST}}
+        VUE_APP_FIREBASE_authDomain: ${{ secrets.VUE_APP_FIREBASE_authDomain_TEST}}
+        VUE_APP_FIREBASE_databaseURL: ${{ secrets.VUE_APP_FIREBASE_databaseURL_TEST}}
+        VUE_APP_FIREBASE_projectId: ${{ secrets.VUE_APP_FIREBASE_projectId_TEST}}
       run: |
         yarn build;
         firebase use $VUE_APP_FIREBASE_projectId --token $FIREBASE_TOKEN;
         firebase functions:config:set admin_email.username=$ADMIN_EMAIL_USERNAME admin_email.password=$ADMIN_EMAIL_PASSWORD appsettings.authdomain=$VUE_APP_FIREBASE_authDomain --token $FIREBASE_TOKEN;
         firebase deploy --only functions --token $FIREBASE_TOKEN;
         firebase deploy --only hosting --token $FIREBASE_TOKEN;
+   #- name: Build  & Deploy (covid19-support-migration)
+   #  env:
+   #    FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+   #    ADMIN_EMAIL_USERNAME: ${{secrets.ADMIN_EMAIL_USERNAME}}
+   #    ADMIN_EMAIL_PASSWORD: ${{secrets.ADMIN_EMAIL_PASSWORD}}
+   #    VUE_APP_FIREBASE_apiKey: ${{ secrets.VUE_APP_FIREBASE_apiKey_MIG}}
+   #    VUE_APP_FIREBASE_authDomain: ${{ secrets.VUE_APP_FIREBASE_authDomain_MIG}}
+   #    VUE_APP_FIREBASE_databaseURL: ${{ secrets.VUE_APP_FIREBASE_databaseURL_MIG}}
+   #    VUE_APP_FIREBASE_projectId: ${{ secrets.VUE_APP_FIREBASE_projectId_MIG}}
+   #  run: |
+   #    yarn build;
+   #    firebase use $VUE_APP_FIREBASE_projectId --token $FIREBASE_TOKEN;
+   #    firebase functions:config:set admin_email.username=$ADMIN_EMAIL_USERNAME admin_email.password=$ADMIN_EMAIL_PASSWORD appsettings.authdomain=$VUE_APP_FIREBASE_authDomain --token $FIREBASE_TOKEN;
+   #    firebase deploy --only functions --token $FIREBASE_TOKEN;
+   #    firebase deploy --only hosting --token $FIREBASE_TOKEN;
         
