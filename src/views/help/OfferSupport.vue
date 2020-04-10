@@ -59,7 +59,7 @@
                                     <div class="col-sm-6">
                                         <fieldset role="group" class="b-form-group form-group">
                                             <div role="group" class>
-                                                <label for="idtype">Primary ID Type*</label>
+                                                <label for="idtype">Primary ID Type</label>
                                                 <input
                                                     id="idtype"
                                                     type="text"
@@ -81,7 +81,7 @@
                                                     v-model="form.personal.idproof"
                                                     :class="{ 'is-invalid': submitted && $v.form.personal.idproof.$error }" />
                                                 <div v-if="submitted && $v.form.personal.idproof.$error" class="invalid-feedback">
-                                                    <span v-if="!$v.form.personal.idtype.idproof">Primary ID is required</span>
+                                                    <span v-if="!$v.form.personal.idproof.required">Primary ID is required</span>
                                                 </div>
                                             </div>
                                         </fieldset>
@@ -177,7 +177,8 @@
                                                     type="password"
                                                     placeholder="Password"
                                                     class="form-control"
-                                                    v-model="password" />
+                                                    v-model="password"
+                                                />
                                             </div>
                                         </fieldset>
                                     </div>
@@ -425,6 +426,13 @@
 import firebase from "firebase";
 import { mapGetters } from "vuex";
 import { required, email } from "vuelidate/lib/validators";
+
+const validName = function (name) {
+    name=name.trim();
+    return (name.length >= 2 && /^(?=.{1,50}$)[a-z]+(?:['_.\s][a-z]+)*$/i.test(name));
+}
+
+
 export default {
     data() {
         return {
@@ -441,6 +449,7 @@ export default {
                 personal: {
                     firstname: "",
                     lastname: "",
+                    idtype: "",
                     idproof: "",
                     sidtype: "",
                     sidproof: "",
@@ -467,7 +476,7 @@ export default {
             status: "new"
         };
     },
-    validations: {
+    validations: {        
         form: {
             personal: {
                 firstname: { required },
@@ -482,8 +491,8 @@ export default {
                 address1: { required },
                 area: { required }
 
-            }
-        }
+            }       
+        } 
     },
     computed: {
         ...mapGetters({
@@ -551,6 +560,7 @@ export default {
                         .then(doc => {
                             if (!doc.exists) {
                                 console.log('No such document!');
+                                this.form.personal.email=this.user.data.email.toLowerCase();
                             } else {
                                 console.log('Document data:', doc.data());
                                 let vol = doc.data();
@@ -587,7 +597,7 @@ export default {
                         this.error = null;
                         result.user
                             .updateProfile({
-                                displayName: this.form.personal.firstname || "User"
+                                displayName: this.form.personal.firstname 
                             })
                             .then(async msg => {
                                 const updateUserProfile = firebase.functions().httpsCallable("updateUserProfileAll");
@@ -633,7 +643,6 @@ export default {
             this.form.personal.sidproof = vol.personal.sidproof;
             this.form.personal.mobile = vol.personal.mobile;
             this.form.personal.altmobile = vol.personal.altmobile;
-            this.form.personal.email=this.user.data.email.toLowerCase();
             if(vol.personal.email != "") {
                 this.form.personal.email = vol.personal.email.toLowerCase();
             }     
@@ -643,8 +652,6 @@ export default {
             this.form.address.address2 = vol.address.address2;
             this.form.address.area = vol.address.area;
             this.form.address.postcode = vol.address.postcode;
-            this.form.availability.location = vol.availability.location;
-            this.form.availability.time = vol.availability.time;
             this.form.accountstatus = vol.accountstatus;
             this.form.isadult = vol.isadult;
             this.form.availability.support = vol.availability.support;
