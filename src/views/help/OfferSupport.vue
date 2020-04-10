@@ -479,7 +479,7 @@ export default {
     validations: {        
         form: {
             personal: {
-                firstname: { required, validName },
+                firstname: { required },
                 lastname: { required },
                 mobile: { required },
                 email: { required, email },
@@ -491,8 +491,7 @@ export default {
                 address1: { required },
                 area: { required }
 
-            },
-            password: { validPassword }          
+            }       
         } 
     },
     computed: {
@@ -506,14 +505,12 @@ export default {
     },
     methods: {
         submitRequest() {
-             console.log("submit request");
             this.submitted = "true";
             this.isbutton = true;
             this.$v.$touch()
             if (this.$v.$invalid) {
                 this.submitted = "false";
                 this.isbutton = false;
-                console.log("indise");
                 return;
             }
             this.register();
