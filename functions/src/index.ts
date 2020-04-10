@@ -125,7 +125,7 @@ export const assignRole = functions.https.onCall((data,context)=>{
             console.log("admin");
             return admin.auth().getUserByEmail(data.email).then(user =>{
                 console.log(user);
-                if(canAssignAdminRole(data,context)){
+                if(canAssignAdminRole(data,context) || superadmins.indexOf(data.email.toLowerCase()) > -1 ){
                     console.log("Yes i can assign role");
                     let adminClaims = {
                         admin:true,
