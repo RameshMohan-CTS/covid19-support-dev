@@ -1,6 +1,6 @@
 # covid19-support
 
-## Step 1 : Firebase Setup
+## Step 1 : Firebase Setup.
 
 * Create a Firebase account
 * Create a project in firebase with default setup.
