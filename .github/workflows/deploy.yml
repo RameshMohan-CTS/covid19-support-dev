@@ -59,7 +59,7 @@ jobs:
       run: |
         yarn build;
         firebase use $VUE_APP_FIREBASE_projectId --token $FIREBASE_TOKEN;
-        firebase functions:config:set admin_email.username=$ADMIN_EMAIL_USERNAME admin_email.password=$ADMIN_EMAIL_PASSWORD appsettings.authdomain=$VUE_APP_FIREBASE_authDomain_TEST --token $FIREBASE_TOKEN;
+        firebase functions:config:set admin_email.username=$ADMIN_EMAIL_USERNAME admin_email.password=$ADMIN_EMAIL_PASSWORD appsettings.authdomain=$VUE_APP_FIREBASE_authDomain --token $FIREBASE_TOKEN;
         firebase deploy --only functions --token $FIREBASE_TOKEN;
         firebase deploy --only hosting --token $FIREBASE_TOKEN;
    #- name: Build  & Deploy (covid19-support-migration)
@@ -74,7 +74,7 @@ jobs:
    #  run: |
    #    yarn build;
    #    firebase use $VUE_APP_FIREBASE_projectId --token $FIREBASE_TOKEN;
-   #    firebase functions:config:set admin_email.username=$ADMIN_EMAIL_USERNAME admin_email.password=$ADMIN_EMAIL_PASSWORD appsettings.authdomain=$VUE_APP_FIREBASE_authDomain_MIG --token $FIREBASE_TOKEN;
+   #    firebase functions:config:set admin_email.username=$ADMIN_EMAIL_USERNAME admin_email.password=$ADMIN_EMAIL_PASSWORD appsettings.authdomain=$VUE_APP_FIREBASE_authDomain --token $FIREBASE_TOKEN;
    #    firebase deploy --only functions --token $FIREBASE_TOKEN;
    #    firebase deploy --only hosting --token $FIREBASE_TOKEN;
         
