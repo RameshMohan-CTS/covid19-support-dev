@@ -335,7 +335,7 @@ export const sendNotificationOnVolunteerRegistration = functions.firestore.docum
 
             fetchEmailSettings('volunteer_registration')
                 .then((ref) => {
-                    
+
                     var emailSubject: string = "";
                     var txtMessage: string = "";
                     var htmlMessage: string = "";

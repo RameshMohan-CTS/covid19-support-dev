@@ -68,6 +68,11 @@ const start = ()=>{
       render: h => h(App)
     }).$mount('#app')
   }).catch(ex=>{
+    new Vue({
+      router,
+      store,
+      render: h => h(App)
+    }).$mount('#app')
     console.log(ex);
   });  
 }
