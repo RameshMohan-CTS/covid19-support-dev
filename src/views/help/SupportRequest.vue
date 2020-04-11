@@ -575,16 +575,45 @@ export default {
       }
     },
 
-    sendEmailNotificationOnAssigned(volntrEmail) {
+    fetchEmailContent(){      
+      return firebase.firestore()
+        .collection("email_settings")
+        .doc("request_assignment")
+        .get();
+    },
+
+    async sendEmailNotificationOnAssigned(volntrEmail) {
+
+      var emailSubject = ""
+      var textMessage = ""
+      var htmlMessage = ""
+
+      await this.fetchEmailContent()
+            .then(doc => {          
+          emailSubject = doc.data().subject;
+          textMessage = doc.data().text_message;
+          htmlMessage = doc.data().html_message;
+        });
+
+        textMessage = textMessage.replace('$$BENEFICIARYNAME$$', this.supportrequest.contact.name);
+        textMessage = textMessage.replace('$$REQUESTID$$', this.$route.params.supportrequestid);
+        textMessage = textMessage.replace('$$REQUESTTITLE$$', this.supportrequest.request.title);
+        textMessage = textMessage.replace('$$VOLUNTEEREMAIL$$', volntrEmail);
+
+        htmlMessage = htmlMessage.replace('$$BENEFICIARYNAME$$', this.supportrequest.contact.name);
+        htmlMessage = htmlMessage.replace('$$REQUESTID$$', this.$route.params.supportrequestid);
+        htmlMessage = htmlMessage.replace('$$REQUESTTITLE$$', this.supportrequest.request.title);
+        htmlMessage = htmlMessage.replace('$$VOLUNTEEREMAIL$$', volntrEmail);
+
       const sendEmail = firebase
         .functions()
-        .httpsCallable("sendEmailOnSupportRequestAssigned");
+        .httpsCallable("sendEmailNotification");
       sendEmail({
-        beneficiaryEmail: this.supportrequest.contact.email + ';' +  this.supportrequest.requestor.email,  
-        beneficiaryName:  this.supportrequest.contact.name,   
-        volunteerEmail: volntrEmail,
-        requestId: this.$route.params.supportrequestid,
-        requestTitle: this.supportrequest.request.title        
+        recipients: this.supportrequest.contact.email + ';' +  this.supportrequest.requestor.email,  
+        copiedRecipients: volntrEmail,
+        subject: emailSubject,
+        mailContentPlainText:  textMessage,           
+        mailContentHtml: htmlMessage
       })
         .then(
           setTimeout(() => {
